@@ -14,9 +14,11 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import kotlinx.coroutines.launch
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -29,23 +31,6 @@ class MainActivity : AppCompatActivity() {
 
     // This Set will store all the ingredients scanned so far.
     private val currentIngredients = mutableSetOf<String>()
-
-    /**
-     * A simple hardcoded database for our Proof of Concept.
-     */
-    private val interactionDatabase = mapOf(
-        "ibuprofen" to mapOf(
-            "aspirin" to "High risk of stomach bleeding. Avoid taking together.",
-            "naproxen" to "Both are NSAIDs. Taking them together increases risk of side effects."
-        ),
-        "aspirin" to mapOf(
-            "ibuprofen" to "High risk of stomach bleeding. Avoid taking together."
-        ),
-        "paracetamol" to mapOf(
-            // Paracetamol is quite safe, but let's add a placeholder
-            "warfarin" to "Increased risk of bleeding. Consult a doctor."
-        )
-    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -100,20 +85,19 @@ class MainActivity : AppCompatActivity() {
 
                 if (ingredients.isNotEmpty()) {
                     currentIngredients.addAll(ingredients)
-                    val interaction = checkPocInteractions(currentIngredients.toList())
-
-                    val capitalizedCurrentIngredients = currentIngredients.map { it.replaceFirstChar(Char::titlecase) }
                     val capitalizedIngredients = ingredients.map { it.replaceFirstChar(Char::titlecase) }
-
-                    val fullListText = getString(R.string.current_drugs, capitalizedCurrentIngredients.joinToString())
-                    val warningText = if (interaction != null) {
-                        getString(R.string.interaction_warning, interaction.first, interaction.second, interaction.third)
-                    } else {
-                        getString(R.string.no_interactions_found)
-                    }
-
-                    resultTextView.text = "$fullListText\n$warningText"
                     Toast.makeText(this, getString(R.string.ingredients_added, capitalizedIngredients.joinToString()), Toast.LENGTH_SHORT).show()
+
+                    // Use a coroutine to check for interactions in the background
+                    lifecycleScope.launch {
+                        resultTextView.text = getString(R.string.checking_for_interactions)
+                        val interactionResult = DrugApiClient.checkInteractions(currentIngredients.toList())
+                        val capitalizedCurrentIngredients = currentIngredients.map { it.replaceFirstChar(Char::titlecase) }
+                        val fullListText = getString(R.string.current_drugs, capitalizedCurrentIngredients.joinToString())
+                        val warningText = interactionResult ?: getString(R.string.no_interactions_found)
+
+                        resultTextView.text = "$fullListText\n$warningText"
+                    }
                 } else {
                     Toast.makeText(this, getString(R.string.no_known_ingredients_found), Toast.LENGTH_SHORT).show()
                 }
@@ -151,30 +135,6 @@ class MainActivity : AppCompatActivity() {
         }
         return foundIngredients.toList()
     }
-
-    /**
-     * Checks a list of ingredients against the hardcoded database.
-     * @return A Triple containing the two interacting drugs and the warning message, or null if no interaction is found.
-     */
-    private fun checkPocInteractions(ingredients: List<String>): Triple<String, String, String>? {
-        if (ingredients.size < 2) return null
-
-        for (i in ingredients.indices) {
-            for (j in i + 1 until ingredients.size) {
-                val drug1 = ingredients[i]
-                val drug2 = ingredients[j]
-
-                interactionDatabase[drug1]?.get(drug2)?.let {
-                    return Triple(drug1.replaceFirstChar(Char::titlecase), drug2.replaceFirstChar(Char::titlecase), it)
-                }
-                interactionDatabase[drug2]?.get(drug1)?.let {
-                    return Triple(drug2.replaceFirstChar(Char::titlecase), drug1.replaceFirstChar(Char::titlecase), it)
-                }
-            }
-        }
-        return null
-    }
-
 
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
