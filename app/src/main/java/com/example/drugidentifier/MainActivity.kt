@@ -7,6 +7,7 @@ import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -72,6 +73,7 @@ class MainActivity : AppCompatActivity() {
 
         imageCapture.takePicture(
             ContextCompat.getMainExecutor(this),
+            @OptIn(ExperimentalGetImage::class)
             object : ImageCapture.OnImageCapturedCallback() {
                 override fun onCaptureSuccess(imageProxy: ImageProxy) {
                     val mediaImage = imageProxy.image
@@ -97,24 +99,23 @@ class MainActivity : AppCompatActivity() {
                 val ingredients = extractIngredients(rawOcrText)
 
                 if (ingredients.isNotEmpty()) {
-                    // Add the newly found ingredients to our master list
                     currentIngredients.addAll(ingredients)
+                    val interaction = checkPocInteractions(currentIngredients.toList())
 
-                    // Check the entire list for interactions
-                    val interactionResult = checkPocInteractions(currentIngredients.toList())
-
-                    // Capitalize for display
                     val capitalizedCurrentIngredients = currentIngredients.map { it.replaceFirstChar(Char::titlecase) }
                     val capitalizedIngredients = ingredients.map { it.replaceFirstChar(Char::titlecase) }
 
-                    // Display the complete list and any warnings
-                    val fullListText = "Current Drugs: ${capitalizedCurrentIngredients.joinToString()}"
-                    val warningText = interactionResult ?: "No interactions found."
+                    val fullListText = getString(R.string.current_drugs, capitalizedCurrentIngredients.joinToString())
+                    val warningText = if (interaction != null) {
+                        getString(R.string.interaction_warning, interaction.first, interaction.second, interaction.third)
+                    } else {
+                        getString(R.string.no_interactions_found)
+                    }
 
                     resultTextView.text = "$fullListText\n$warningText"
-                    Toast.makeText(this, "${capitalizedIngredients.joinToString()} added.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.ingredients_added, capitalizedIngredients.joinToString()), Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(this, "No known ingredients found.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.no_known_ingredients_found), Toast.LENGTH_SHORT).show()
                 }
 
                 imageProxy.close()
@@ -153,8 +154,9 @@ class MainActivity : AppCompatActivity() {
 
     /**
      * Checks a list of ingredients against the hardcoded database.
+     * @return A Triple containing the two interacting drugs and the warning message, or null if no interaction is found.
      */
-    private fun checkPocInteractions(ingredients: List<String>): String? {
+    private fun checkPocInteractions(ingredients: List<String>): Triple<String, String, String>? {
         if (ingredients.size < 2) return null
 
         for (i in ingredients.indices) {
@@ -162,17 +164,15 @@ class MainActivity : AppCompatActivity() {
                 val drug1 = ingredients[i]
                 val drug2 = ingredients[j]
 
-                // Check for interaction from drug1 to drug2
                 interactionDatabase[drug1]?.get(drug2)?.let {
-                    return "Interaction: ${drug1.replaceFirstChar(Char::titlecase)} + ${drug2.replaceFirstChar(Char::titlecase)} - $it"
+                    return Triple(drug1.replaceFirstChar(Char::titlecase), drug2.replaceFirstChar(Char::titlecase), it)
                 }
-                // Check for interaction from drug2 to drug1
                 interactionDatabase[drug2]?.get(drug1)?.let {
-                    return "Interaction: ${drug2.replaceFirstChar(Char::titlecase)} + ${drug1.replaceFirstChar(Char::titlecase)} - $it"
+                    return Triple(drug2.replaceFirstChar(Char::titlecase), drug1.replaceFirstChar(Char::titlecase), it)
                 }
             }
         }
-        return null // No interactions found
+        return null
     }
 
 
