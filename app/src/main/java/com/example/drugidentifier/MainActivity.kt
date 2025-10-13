@@ -113,26 +113,66 @@ class MainActivity : AppCompatActivity() {
 
     /**
      * Parses raw OCR text to extract a list of known active ingredients.
+     * This version includes a map for common misspellings and Levenshtein distance for fuzzy matching.
+     * @param rawText The raw text string from ML Kit.
+     * @return A List of found ingredient names in lowercase.
      */
     private fun extractIngredients(rawText: String): List<String> {
+        // Our dictionary of known drug ingredients.
         val knownIngredients = setOf(
             "paracetamol", "ibuprofen", "aspirin", "caffeine", "naproxen",
-            "cetirizine", "loratadine", "diphenhydramine", "guaifenesin", "serratiopeptidase", "warfarin"
+            "cetirizine", "loratadine", "diphenhydramine", "guaifenesin",
+            "pseudoephedrine", "doxycycline", "calcium carbonate"
         )
 
-        val normalizedText = rawText.lowercase()
-        val cleanedText = normalizedText
+        // STRATEGY 3: A map to fix common, predictable OCR errors.
+        val commonMisspellings = mapOf(
+            "ibuproten" to "ibuprofen",
+            "lbuprofen" to "ibuprofen", // 'l' vs 'i'
+            "paracetamo1" to "paracetamol" // '1' vs 'l'
+            // Add more common errors here as you find them
+        )
+
+        // 1. Normalize and clean the text
+        val cleanedText = rawText.lowercase()
             .replace(Regex("\\d+\\s*(mg|g)"), " ")
             .replace(Regex("[.,:;()]"), " ")
 
-        val words = cleanedText.split(Regex("\\s+")).filter { it.isNotBlank() }
+        val words = cleanedText.split(Regex("\\s+")).filter { it.isNotBlank() && it.length > 3 }
         val foundIngredients = mutableSetOf<String>()
 
         for (word in words) {
+            // First, check if the word is a known common misspelling
+            if (commonMisspellings.containsKey(word)) {
+                val correctedWord = commonMisspellings[word]!!
+                foundIngredients.add(correctedWord)
+                continue // Move to the next word
+            }
+            
+            // If it's not a common misspelling, check if it's an exact match
             if (word in knownIngredients) {
                 foundIngredients.add(word)
+                continue // Move to the next word
+            }
+
+            // STRATEGY 1: If no exact match, use fuzzy matching (Levenshtein distance)
+            var bestMatch: String? = null
+            var minDistance = 3 // Set a threshold (e.g., max 2 errors allowed)
+
+            for (known in knownIngredients) {
+                val distance = levenshtein(word, known)
+                if (distance < minDistance) {
+                    minDistance = distance
+                    bestMatch = known
+                }
+            }
+
+            // If we found a close enough match, add it.
+            if (bestMatch != null) {
+                foundIngredients.add(bestMatch)
             }
         }
+
         return foundIngredients.toList()
     }
 
@@ -185,4 +225,29 @@ class MainActivity : AppCompatActivity() {
         private const val REQUEST_CODE_PERMISSIONS = 10
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
     }
+}
+
+/**
+ * Calculates the Levenshtein distance between two strings.
+ * This is a measure of how different two words are. A lower number means more similar.
+ */
+fun levenshtein(lhs: String, rhs: String): Int {
+    val lhsLength = lhs.length
+    val rhsLength = rhs.length
+
+    var cost = Array(lhsLength + 1) { it }
+    var newCost = Array(lhsLength + 1) { 0 }
+
+    for (i in 1..rhsLength) {
+        newCost[0] = i
+        for (j in 1..lhsLength) {
+            val match = if (lhs[j - 1] == rhs[i - 1]) 0 else 1
+            val costReplace = cost[j - 1] + match
+            val costInsert = cost[j] + 1
+            val costDelete = newCost[j - 1] + 1
+            newCost[j] = minOf(costReplace, costInsert, costDelete)
+        }
+        cost = newCost.clone()
+    }
+    return cost[lhsLength]
 }
