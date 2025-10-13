@@ -1,103 +1,103 @@
 package com.example.drugidentifier
 
 import android.util.Log
-import okhttp3.OkHttpClient // New import
-import okhttp3.logging.HttpLoggingInterceptor // New import
+import okhttp3.OkHttpClient
+import okhttp3.ResponseBody // Import ResponseBody
+import okhttp3.logging.HttpLoggingInterceptor
+import org.json.JSONObject // Import Android's built-in JSON parser
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-// --- Data Classes (No changes here) ---
-// ... (Your data classes remain the same) ...
+// --- Data Classes (We only need the first one now) ---
 data class RxNormResponse(val approximateGroup: ApproximateGroup)
 data class ApproximateGroup(val candidate: List<Candidate>?)
 data class Candidate(val rxcui: String)
 
-data class InteractionResponse(val fullInteractionTypeGroup: List<FullInteractionTypeGroup>?)
-data class FullInteractionTypeGroup(val fullInteractionType: List<FullInteractionType>?)
-data class FullInteractionType(val interactionPair: List<InteractionPair>)
-data class InteractionPair(val description: String)
-
-// --- Retrofit API Service Interface (No changes here) ---
+// --- Retrofit API Service Interface (Simplified) ---
 interface NihApiService {
     @GET("approximateTerm.json")
     suspend fun getRxcui(@Query("term") drugName: String): RxNormResponse
 
+    // This now returns a raw ResponseBody instead of our custom class
     @GET("interaction/list.json")
-    suspend fun getInteractions(@Query("rxcuis", encoded = true) rxcuis: String): InteractionResponse
+    suspend fun getInteractionList(
+        @Query("rxcuis", encoded = true) rxcuis: String
+    ): ResponseBody // Return type changed to ResponseBody
 }
 
-
 // --- The Main Client Object ---
-
 object DrugApiClient {
 
-    // ▼▼▼ THIS ENTIRE SECTION IS NEW ▼▼▼
-    // We are creating a more advanced client that includes a logger.
     private val apiService: NihApiService by lazy {
-
-        // 1. Create the Logging Interceptor
-        val logging = HttpLoggingInterceptor()
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY) // Log everything: URL, headers, body
-
-        // 2. Create the OkHttp Client and add the interceptor
-        val client = OkHttpClient.Builder()
+        val logging = HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
+        val httpClient = OkHttpClient.Builder()
             .addInterceptor(logging)
+            .addInterceptor { chain ->
+                val original = chain.request()
+                val requestBuilder = original.newBuilder()
+                    .header("User-Agent", "Mozilla/5.0 (Android 11; Mobile; rv:68.0) Gecko/68.0 Firefox/68.0")
+                val request = requestBuilder.build()
+                chain.proceed(request)
+            }
             .build()
 
-        // 3. Build Retrofit and attach the custom OkHttp client
         Retrofit.Builder()
             .baseUrl("https://rxnav.nlm.nih.gov/REST/")
-            .client(client) // Attach the client with the logger
-            .addConverterFactory(GsonConverterFactory.create())
+            .client(httpClient)
+            .addConverterFactory(GsonConverterFactory.create()) // Gson converter is still fine
             .build()
             .create(NihApiService::class.java)
     }
-    // ▲▲▲ END OF NEW SECTION ▲▲▲
 
-
-    // The checkInteractions function remains exactly the same.
     suspend fun checkInteractions(ingredients: List<String>): String? {
-        // ... (The rest of your checkInteractions function is unchanged) ...
         if (ingredients.size < 2) return null
-        Log.d("DrugApiClient", "Starting interaction check for: $ingredients")
+
         val rxcuis = ingredients.mapNotNull { ingredient ->
             try {
-                Log.d("DrugApiClient", "Searching for RxCUI for: '$ingredient'")
-                val response = apiService.getRxcui(ingredient)
-                val rxcui = response.approximateGroup.candidate?.firstOrNull()?.rxcui
-                if (rxcui != null) {
-                    Log.d("DrugApiClient", "SUCCESS: Found RxCUI $rxcui for '$ingredient'")
-                } else {
-                    Log.e("DrugApiClient", "FAILURE: Could not find RxCUI for '$ingredient'. Response was empty.")
-                }
-                rxcui
+                apiService.getRxcui(ingredient).approximateGroup.candidate?.firstOrNull()?.rxcui
             } catch (e: Exception) {
-                Log.e("DrugApiClient", "FAILURE: Network error for '$ingredient': ${e.message}")
                 null
             }
         }
+
         if (rxcuis.size < ingredients.size || rxcuis.size < 2) {
-            Log.e("DrugApiClient", "Could not resolve all ingredients. Found ${rxcuis.size} of ${ingredients.size}.")
             return "Could not find all drugs in the database."
         }
-        Log.d("DrugApiClient", "Checking interactions for RxCUIs: $rxcuis")
+
         return try {
-            val response = apiService.getInteractions(rxcuis.joinToString("+"))
-            val description = response.fullInteractionTypeGroup
-                ?.firstOrNull()?.fullInteractionType
-                ?.firstOrNull()?.interactionPair
-                ?.firstOrNull()?.description
-            if (description != null) {
-                Log.d("DrugApiClient", "Interaction found: $description")
+            val sortedRxcuiString = rxcuis.map { it.toInt() }.sorted().joinToString("+")
+
+            // 1. Get the raw response body
+            val responseBody = apiService.getInteractionList(sortedRxcuiString)
+
+            // 2. Convert it to a String
+            val jsonString = responseBody.string()
+            Log.d("DrugApiClient", "Raw JSON Response: $jsonString")
+
+            // 3. Manually parse the String to find the description
+            val jsonObject = JSONObject(jsonString)
+            val description = jsonObject.optJSONArray("fullInteractionTypeGroup")
+                ?.optJSONObject(0)
+                ?.optJSONArray("fullInteractionType")
+                ?.optJSONObject(0)
+                ?.optJSONArray("interactionPair")
+                ?.optJSONObject(0)
+                ?.optString("description")
+
+            if (!description.isNullOrEmpty()) {
+                Log.d("DrugApiClient", "SUCCESS: Manually parsed interaction: $description")
             } else {
-                Log.d("DrugApiClient", "No interactions found in API response.")
+                Log.d("DrugApiClient", "SUCCESS: No interaction description found in JSON.")
             }
             description
+
         } catch (e: Exception) {
-            Log.e("DrugApiClient", "Error during interaction check: ${e.message}")
-            "Error checking for interactions. Please check your internet connection."
+            Log.e("DrugApiClient", "Error during manual parsing: ${e.message}", e)
+            "Error: Could not retrieve or parse interaction data."
         }
     }
 }
