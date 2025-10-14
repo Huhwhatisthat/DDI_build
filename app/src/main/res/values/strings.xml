@@ -8,4 +8,13 @@
     <string name="no_interactions_found">No interactions found.</string>
     <string name="interaction_warning">Interaction: %1$s + %2$s - %3$s</string>
     <string name="checking_for_interactions">Checking for interactions...</string>
+    
+    <!-- Home Screen Strings -->
+    <string name="welcome_message">Welcome to Drug Identifier</string>
+    <string name="top_section_placeholder">Content will be added here</string>
+    <string name="actions_title">What would you like to do?</string>
+    <string name="action_scan_drug">Scan Drug</string>
+    <string name="action_add_drug">Add Drug</string>
+    <string name="action_view_drugs">View My Drugs</string>
+    <string name="action_check_interactions">Check Interactions</string>
 </resources>

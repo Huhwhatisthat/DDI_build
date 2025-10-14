@@ -21,6 +21,7 @@ import androidx.lifecycle.lifecycleScope
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import com.example.drugidentifier.data.DrugRepository
 import kotlinx.coroutines.launch
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -34,8 +35,7 @@ class MainActivity : AppCompatActivity() {
     private var imageCapture: ImageCapture? = null
     private var nicknameForScan: String? = null
 
-    // This set will store pairs of (Nickname, Ingredient)
-    private val currentDrugs = mutableSetOf<Pair<String, String>>()
+    // Using the shared repository instead of local storage
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,6 +59,58 @@ class MainActivity : AppCompatActivity() {
             ActivityCompat.requestPermissions(
                 this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS
             )
+        }
+        
+        // Handle intent from HomeActivity
+        handleIncomingAction()
+    }
+    
+    private fun handleIncomingAction() {
+        val action = intent.getStringExtra("ACTION")
+        when (action) {
+            "SCAN_DRUG", "ADD_DRUG" -> {
+                // Both actions start with adding a drug dialog
+                showAddDrugDialog()
+            }
+            "VIEW_DRUGS" -> {
+                // Display current drugs
+                displayCurrentDrugs()
+            }
+            "CHECK_INTERACTIONS" -> {
+                // Check interactions for current drugs
+                checkCurrentInteractions()
+            }
+        }
+    }
+    
+    private fun displayCurrentDrugs() {
+        if (DrugRepository.isEmpty()) {
+            resultTextView.text = "No drugs saved yet.\n\nTap 'Add New Drug' to get started."
+        } else {
+            val drugListText = DrugRepository.getAllDrugs().joinToString("\n") { "- ${it.first} (${it.second})" }
+            resultTextView.text = "Your Saved Drugs:\n\n$drugListText"
+        }
+    }
+    
+    private fun checkCurrentInteractions() {
+        if (DrugRepository.isEmpty()) {
+            resultTextView.text = "No drugs to check.\n\nPlease add at least 2 drugs to check for interactions."
+            return
+        }
+        
+        if (DrugRepository.size() < 2) {
+            resultTextView.text = "You need at least 2 drugs to check for interactions.\n\nCurrent drugs: ${DrugRepository.size()}"
+            return
+        }
+        
+        val allIngredients = DrugRepository.getAllIngredients()
+        lifecycleScope.launch {
+            resultTextView.text = getString(R.string.checking_for_interactions)
+            val interactionResult = DrugApiClient.checkInteractions(allIngredients)
+            val drugListText = DrugRepository.getAllDrugs().joinToString("\n") { "- ${it.first} (${it.second})" }
+            val warningText = interactionResult ?: getString(R.string.no_interactions_found)
+
+            resultTextView.text = "Your Drugs:\n$drugListText\n\n$warningText"
         }
     }
 
@@ -151,15 +203,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun saveDrugToDatabase(nickname: String, ingredient: String) {
-        currentDrugs.add(nickname to ingredient)
+        DrugRepository.addDrug(nickname, ingredient)
         Toast.makeText(this, "$nickname ($ingredient) saved!", Toast.LENGTH_SHORT).show()
 
-        val allIngredients = currentDrugs.map { it.second }
+        val allIngredients = DrugRepository.getAllIngredients()
 
         lifecycleScope.launch {
             resultTextView.text = getString(R.string.checking_for_interactions)
             val interactionResult = DrugApiClient.checkInteractions(allIngredients)
-            val drugListText = currentDrugs.joinToString("\n") { "- ${it.first} (${it.second})" }
+            val drugListText = DrugRepository.getAllDrugs().joinToString("\n") { "- ${it.first} (${it.second})" }
             val warningText = interactionResult ?: getString(R.string.no_interactions_found)
 
             resultTextView.text = "Your Drugs:\n$drugListText\n\n$warningText"

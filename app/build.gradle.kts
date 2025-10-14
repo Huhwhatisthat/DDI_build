@@ -46,6 +46,12 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+    // For GridLayout in home screen
+    implementation("androidx.gridlayout:gridlayout:1.0.0")
+    
+    // For CardView
+    implementation("androidx.cardview:cardview:1.0.0")
+
     // For easily handling the camera
     val cameraxVersion = "1.3.1"
     implementation("androidx.camera:camera-core:$cameraxVersion")
