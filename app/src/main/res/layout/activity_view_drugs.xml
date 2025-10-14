@@ -51,43 +51,48 @@
                 android:layout_height="wrap_content"
                 android:text="0"
                 android:textSize="14sp"
-                android:textColor="@color/secondary_text"
-                android:fontFamily="sans-serif"
+                android:textColor="@color/white"
+                android:fontFamily="sans-serif-medium"
                 android:paddingHorizontal="12dp"
                 android:paddingVertical="6dp"
                 android:background="@drawable/bg_count_badge"/>
 
         </LinearLayout>
 
-        <!-- Interactions Toggle -->
+        <!-- Interactions Button -->
         <LinearLayout
+            android:id="@+id/check_interactions_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:paddingHorizontal="24dp"
-            android:paddingBottom="16dp"
-            android:gravity="center_vertical">
+            android:paddingVertical="16dp"
+            android:gravity="center_vertical"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?android:attr/selectableItemBackground">
 
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_warning"
-                android:layout_marginEnd="8dp"
+                android:layout_marginEnd="12dp"
                 app:tint="@color/warning"/>
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Show Interactions"
+                android:text="Check for Interactions"
                 android:textSize="15sp"
                 android:textColor="@color/primary_text"
                 android:fontFamily="sans-serif-medium"/>
 
-            <com.google.android.material.materialswitch.MaterialSwitch
-                android:id="@+id/interactions_switch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_arrow_right"
+                app:tint="@color/secondary_text"/>
 
         </LinearLayout>
 

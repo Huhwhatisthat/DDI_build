@@ -10,14 +10,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.drugidentifier.data.DrugRepository
-import com.google.android.material.materialswitch.MaterialSwitch
 
 class ViewDrugsActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var emptyStateContainer: View
     private lateinit var drugCountBadge: TextView
-    private lateinit var interactionsSwitch: MaterialSwitch
+    private lateinit var checkInteractionsButton: LinearLayout
     private lateinit var adapter: DrugListViewAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,7 +30,7 @@ class ViewDrugsActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.drugs_list)
         emptyStateContainer = findViewById(R.id.empty_state)
         drugCountBadge = findViewById(R.id.drug_count)
-        interactionsSwitch = findViewById(R.id.interactions_switch)
+        checkInteractionsButton = findViewById(R.id.check_interactions_button)
 
         // Back button
         backButton.setOnClickListener {
@@ -41,15 +40,10 @@ class ViewDrugsActivity : AppCompatActivity() {
         // Setup RecyclerView
         setupRecyclerView()
 
-        // Setup interactions switch - navigate to interactions page
-        interactionsSwitch.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                // Open interactions activity
-                val intent = Intent(this, InteractionsActivity::class.java)
-                startActivity(intent)
-                // Reset switch after opening the page
-                interactionsSwitch.isChecked = false
-            }
+        // Setup interactions button - navigate to interactions page
+        checkInteractionsButton.setOnClickListener {
+            val intent = Intent(this, InteractionsActivity::class.java)
+            startActivity(intent)
         }
 
         // Load drugs
@@ -82,13 +76,15 @@ class ViewDrugsActivity : AppCompatActivity() {
             recyclerView.visibility = View.GONE
             emptyStateContainer.visibility = View.VISIBLE
             drugCountBadge.text = "0"
-            interactionsSwitch.isEnabled = false
+            checkInteractionsButton.isEnabled = false
+            checkInteractionsButton.alpha = 0.5f
         } else {
             // Show drugs list
             recyclerView.visibility = View.VISIBLE
             emptyStateContainer.visibility = View.GONE
             drugCountBadge.text = drugs.size.toString()
-            interactionsSwitch.isEnabled = true
+            checkInteractionsButton.isEnabled = true
+            checkInteractionsButton.alpha = 1.0f
             
             adapter.updateData(drugs, emptyList(), false)
         }
