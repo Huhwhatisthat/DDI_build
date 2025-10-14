@@ -40,6 +40,12 @@
             android:exported="false">
         </activity>
         
+        <!-- Interactions Activity - Drug Interaction Checker -->
+        <activity
+            android:name=".InteractionsActivity"
+            android:exported="false">
+        </activity>
+        
         <!-- Main Activity - Drug Scanner -->
         <activity
             android:name=".MainActivity"

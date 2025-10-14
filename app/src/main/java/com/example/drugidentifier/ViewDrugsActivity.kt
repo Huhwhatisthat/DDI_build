@@ -1,5 +1,6 @@
 package com.example.drugidentifier
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
@@ -18,7 +19,6 @@ class ViewDrugsActivity : AppCompatActivity() {
     private lateinit var drugCountBadge: TextView
     private lateinit var interactionsSwitch: MaterialSwitch
     private lateinit var adapter: DrugListViewAdapter
-    private var showInteractions = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,13 +41,23 @@ class ViewDrugsActivity : AppCompatActivity() {
         // Setup RecyclerView
         setupRecyclerView()
 
-        // Setup interactions switch
+        // Setup interactions switch - navigate to interactions page
         interactionsSwitch.setOnCheckedChangeListener { _, isChecked ->
-            showInteractions = isChecked
-            loadDrugs()
+            if (isChecked) {
+                // Open interactions activity
+                val intent = Intent(this, InteractionsActivity::class.java)
+                startActivity(intent)
+                // Reset switch after opening the page
+                interactionsSwitch.isChecked = false
+            }
         }
 
         // Load drugs
+        loadDrugs()
+    }
+
+    override fun onResume() {
+        super.onResume()
         loadDrugs()
     }
 
@@ -80,15 +90,7 @@ class ViewDrugsActivity : AppCompatActivity() {
             drugCountBadge.text = drugs.size.toString()
             interactionsSwitch.isEnabled = true
             
-            // Check for interactions if switch is on
-            val interactions = if (showInteractions) {
-                val ingredients = drugs.map { it.activeIngredient }
-                InteractionChecker.checkInteractions(ingredients)
-            } else {
-                emptyList()
-            }
-            
-            adapter.updateData(drugs, interactions, showInteractions)
+            adapter.updateData(drugs, emptyList(), false)
         }
     }
 
