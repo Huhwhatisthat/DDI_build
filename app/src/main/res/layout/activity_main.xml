@@ -4,36 +4,112 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background"
     tools:context=".MainActivity">
 
+    <!-- Camera Preview -->
     <androidx.camera.view.PreviewView
         android:id="@+id/camera_preview"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/capture_button"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_sheet"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/capture_button"
-        android:layout_width="wrap_content"
+    <!-- Bottom Sheet Container -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/bottom_sheet"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/take_picture"
-        android:layout_marginBottom="32dp"
+        app:cardCornerRadius="32dp"
+        app:cardElevation="8dp"
+        app:cardBackgroundColor="@color/surface"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:layout_marginTop="80dp">
 
-    <TextView
-        android:id="@+id/result_text"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <!-- Result Text with ScrollView -->
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:scrollbars="vertical"
+                android:fadeScrollbars="false">
+
+                <TextView
+                    android:id="@+id/result_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/recognized_text_placeholder"
+                    android:textColor="@color/text_primary"
+                    android:textSize="15sp"
+                    android:fontFamily="sans-serif"
+                    android:lineSpacingExtra="4dp"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"/>
+
+            </ScrollView>
+
+            <!-- Action Button -->
+            <Button
+                android:id="@+id/capture_button"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="@string/take_picture"
+                android:textSize="16sp"
+                android:textColor="@color/white"
+                android:fontFamily="sans-serif-medium"
+                android:background="@drawable/button_primary_background"
+                android:layout_marginTop="20dp"
+                android:elevation="0dp"
+                android:stateListAnimator="@null"
+                style="?android:attr/borderlessButtonStyle"/>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <!-- Overlay Info Badge (when camera is active) -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/info_badge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/recognized_text_placeholder"
-        android:textColor="@android:color/white"
-        android:background="#80000000"
-        android:padding="8dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="4dp"
+        app:cardBackgroundColor="#CC1E293B"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginTop="32dp"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_camera_outlined"
+                app:tint="@color/white"
+                android:layout_marginEnd="12dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Point camera at drug label"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif-medium"/>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

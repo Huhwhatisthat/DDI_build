@@ -17,6 +17,7 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var drugsRecyclerView: RecyclerView
     private lateinit var emptyState: LinearLayout
     private lateinit var drugListAdapter: DrugListAdapter
+    private lateinit var medicationCountText: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,6 +25,9 @@ class HomeActivity : AppCompatActivity() {
 
         // Initialize the repository
         DrugRepository.init(this)
+
+        // Initialize views
+        medicationCountText = findViewById(R.id.medication_count)
 
         // Set up RecyclerView
         setupRecyclerView()
@@ -57,6 +61,14 @@ class HomeActivity : AppCompatActivity() {
     private fun updateDrugList() {
         val drugs = DrugRepository.getAllDrugs().toList()
         
+        // Update medication count
+        val count = drugs.size
+        medicationCountText.text = when (count) {
+            0 -> "You have no medications yet"
+            1 -> "You have 1 medication"
+            else -> "You have $count medications"
+        }
+        
         if (drugs.isEmpty()) {
             drugsRecyclerView.visibility = View.GONE
             emptyState.visibility = View.VISIBLE
@@ -68,7 +80,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun showDeleteConfirmation(drug: Pair<String, String>) {
-        AlertDialog.Builder(this)
+        AlertDialog.Builder(this, R.style.Theme_DrugIdentifier)
             .setTitle(getString(R.string.delete_drug_confirmation, drug.first))
             .setMessage("${drug.first}\n${drug.second}")
             .setPositiveButton(getString(R.string.delete)) { _, _ ->
@@ -97,10 +109,10 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun showAddDrugOptions() {
-        val options = arrayOf("📷 Scan Drug Label", "✍️ Enter Manually")
+        val options = arrayOf("📷  Scan Drug Label", "✍️  Enter Manually")
         
-        AlertDialog.Builder(this)
-            .setTitle("Add Drug")
+        AlertDialog.Builder(this, R.style.Theme_DrugIdentifier)
+            .setTitle("Add Medication")
             .setItems(options) { _, which ->
                 when (which) {
                     0 -> {
