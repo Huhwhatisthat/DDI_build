@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="@drawable/bg_card_white">
+
+    <!-- Header -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Update Medication Status"
+        android:textSize="20sp"
+        android:textColor="@color/primary_text"
+        android:fontFamily="sans-serif-medium"
+        android:layout_marginBottom="8dp"/>
+
+    <!-- Drug Name -->
+    <TextView
+        android:id="@+id/dialog_drug_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Aspirin"
+        android:textSize="18sp"
+        android:textColor="@color/primary_blue"
+        android:fontFamily="sans-serif-medium"
+        android:layout_marginBottom="4dp"/>
+
+    <!-- Details -->
+    <TextView
+        android:id="@+id/dialog_drug_details"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1 pill • 10:30 AM"
+        android:textSize="14sp"
+        android:textColor="@color/secondary_text"
+        android:fontFamily="sans-serif"
+        android:layout_marginBottom="24dp"/>
+
+    <!-- Question -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Did you take this medication?"
+        android:textSize="16sp"
+        android:textColor="@color/primary_text"
+        android:fontFamily="sans-serif"
+        android:layout_marginBottom="20dp"/>
+
+    <!-- Action Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <!-- Taken Button -->
+        <LinearLayout
+            android:id="@+id/btn_taken"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="16dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/bg_card_add"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground">
+
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_check"
+                android:layout_marginBottom="8dp"
+                app:tint="@color/white"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Taken"
+                android:textSize="16sp"
+                android:textColor="@color/white"
+                android:fontFamily="sans-serif-medium"/>
+
+        </LinearLayout>
+
+        <!-- Skipped Button -->
+        <LinearLayout
+            android:id="@+id/btn_skipped"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="16dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/bg_card_view"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground">
+
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_close"
+                android:layout_marginBottom="8dp"
+                app:tint="@color/white"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Skipped"
+                android:textSize="16sp"
+                android:textColor="@color/white"
+                android:fontFamily="sans-serif-medium"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Cancel Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_cancel"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="Cancel"
+        android:textSize="14sp"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="@color/secondary_text"
+        app:backgroundTint="@color/surface_light"
+        app:cornerRadius="12dp"
+        android:layout_marginTop="16dp"
+        style="@style/Widget.Material3.Button.TextButton"/>
+
+</LinearLayout>

@@ -13,10 +13,25 @@ import java.util.*
 
 /**
  * Adapter for displaying today's prescriptions with status tracking
+ * 
+ * Status States:
+ * - UPCOMING (Gray): Scheduled time hasn't arrived yet
+ * - PENDING (Yellow): Time arrived, less than 5 minutes passed
+ * - MISSED (Red): Time arrived, more than 5 minutes passed, not taken
+ * - TAKEN (Green): Marked as taken by user
  */
 class PrescriptionAdapter(
-    private val prescriptions: List<Drug>
+    private val prescriptions: List<Drug>,
+    private val onItemClick: (Drug) -> Unit
 ) : RecyclerView.Adapter<PrescriptionAdapter.PrescriptionViewHolder>() {
+
+    enum class MedicationStatus {
+        UPCOMING,   // Gray - time hasn't come
+        PENDING,    // Yellow - time came, < 5 mins
+        MISSED,     // Red - time came, > 5 mins, not taken
+        TAKEN,      // Green - user marked as taken
+        SKIPPED     // Red X - user marked as skipped
+    }
 
     class PrescriptionViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val statusIcon: ImageView = view.findViewById(R.id.status_icon)
@@ -44,45 +59,102 @@ class PrescriptionAdapter(
         holder.frequencyText.text = drug.frequency
         holder.timeText.text = drug.time
         
-        // Determine status (Pending or Completed) based on current time
-        val isPastTime = isPastScheduledTime(drug.time)
+        // Determine status
+        val status = getMedicationStatus(drug)
         
-        if (isPastTime) {
-            // Completed - green check
-            holder.statusIcon.setImageResource(R.drawable.ic_check)
-            holder.statusIcon.setColorFilter(
-                ContextCompat.getColor(holder.itemView.context, R.color.success_color)
-            )
-        } else {
-            // Pending - yellow/orange clock
-            holder.statusIcon.setImageResource(R.drawable.ic_pending)
-            holder.statusIcon.setColorFilter(
-                ContextCompat.getColor(holder.itemView.context, R.color.warning_color)
-            )
+        // Set icon and color based on status
+        when (status) {
+            MedicationStatus.UPCOMING -> {
+                holder.statusIcon.setImageResource(R.drawable.ic_upcoming)
+                holder.statusIcon.setColorFilter(
+                    ContextCompat.getColor(holder.itemView.context, R.color.secondary_text)
+                )
+            }
+            MedicationStatus.PENDING -> {
+                holder.statusIcon.setImageResource(R.drawable.ic_pending)
+                holder.statusIcon.setColorFilter(
+                    ContextCompat.getColor(holder.itemView.context, R.color.warning_color)
+                )
+            }
+            MedicationStatus.MISSED -> {
+                holder.statusIcon.setImageResource(R.drawable.ic_missed)
+                holder.statusIcon.setColorFilter(
+                    ContextCompat.getColor(holder.itemView.context, R.color.error_color)
+                )
+            }
+            MedicationStatus.TAKEN -> {
+                holder.statusIcon.setImageResource(R.drawable.ic_check)
+                holder.statusIcon.setColorFilter(
+                    ContextCompat.getColor(holder.itemView.context, R.color.success_color)
+                )
+            }
+            MedicationStatus.SKIPPED -> {
+                holder.statusIcon.setImageResource(R.drawable.ic_close)
+                holder.statusIcon.setColorFilter(
+                    ContextCompat.getColor(holder.itemView.context, R.color.error_color)
+                )
+            }
+        }
+        
+        // Click listener
+        holder.itemView.setOnClickListener {
+            onItemClick(drug)
         }
     }
 
     override fun getItemCount() = prescriptions.size
 
     /**
-     * Check if the scheduled time has passed
+     * Determine the medication status based on time and user action
      */
-    private fun isPastScheduledTime(scheduledTime: String): Boolean {
+    private fun getMedicationStatus(drug: Drug): MedicationStatus {
+        // Check if user already marked status for today
+        if (drug.todayStatus != null) {
+            val today = getCurrentDate()
+            if (drug.lastTakenDate == today) {
+                return if (drug.todayStatus) MedicationStatus.TAKEN else MedicationStatus.SKIPPED
+            }
+        }
+        
+        // Calculate time-based status
+        val minutesSinceScheduled = getMinutesSinceScheduledTime(drug.time)
+        
+        return when {
+            minutesSinceScheduled < 0 -> MedicationStatus.UPCOMING    // Time hasn't come
+            minutesSinceScheduled <= 5 -> MedicationStatus.PENDING     // 0-5 minutes
+            else -> MedicationStatus.MISSED                             // > 5 minutes
+        }
+    }
+
+    /**
+     * Calculate minutes since scheduled time (negative if in future)
+     */
+    private fun getMinutesSinceScheduledTime(scheduledTime: String): Long {
         return try {
             val sdf = SimpleDateFormat("hh:mm a", Locale.getDefault())
             val scheduled = sdf.parse(scheduledTime)
             
             val now = Calendar.getInstance()
             val scheduledCal = Calendar.getInstance()
-            scheduledCal.time = scheduled ?: return false
+            scheduledCal.time = scheduled ?: return -1
             
             // Set the same date for fair comparison
             scheduledCal.set(Calendar.YEAR, now.get(Calendar.YEAR))
             scheduledCal.set(Calendar.DAY_OF_YEAR, now.get(Calendar.DAY_OF_YEAR))
             
-            now.after(scheduledCal)
+            // Calculate difference in minutes
+            val diffMillis = now.timeInMillis - scheduledCal.timeInMillis
+            diffMillis / (60 * 1000) // Convert to minutes
         } catch (e: Exception) {
-            false
+            -1
         }
+    }
+    
+    /**
+     * Get current date in YYYY-MM-DD format
+     */
+    private fun getCurrentDate(): String {
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        return sdf.format(Date())
     }
 }

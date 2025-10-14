@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.drugidentifier.data.DrugRepository
+import com.example.drugidentifier.models.Drug
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class HomeActivity : AppCompatActivity() {
 
@@ -80,9 +82,46 @@ class HomeActivity : AppCompatActivity() {
             prescriptionsSection.visibility = View.GONE
         } else {
             prescriptionsSection.visibility = View.VISIBLE
-            prescriptionAdapter = PrescriptionAdapter(todaysPrescriptions)
+            prescriptionAdapter = PrescriptionAdapter(todaysPrescriptions) { drug ->
+                showMedicationStatusDialog(drug)
+            }
             prescriptionsRecyclerView.adapter = prescriptionAdapter
         }
+    }
+    
+    private fun showMedicationStatusDialog(drug: Drug) {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_medication_status, null)
+        
+        val dialog = MaterialAlertDialogBuilder(this)
+            .setView(dialogView)
+            .setCancelable(true)
+            .create()
+        
+        // Set drug info
+        dialogView.findViewById<TextView>(R.id.dialog_drug_name).text = drug.name
+        val detailsText = "${drug.quantity} ${if (drug.quantity == 1) "pill" else "pills"} • ${drug.time}"
+        dialogView.findViewById<TextView>(R.id.dialog_drug_details).text = detailsText
+        
+        // Taken button
+        dialogView.findViewById<LinearLayout>(R.id.btn_taken).setOnClickListener {
+            DrugRepository.updateMedicationStatus(drug.name, taken = true)
+            updatePrescriptionsList()
+            dialog.dismiss()
+        }
+        
+        // Skipped button
+        dialogView.findViewById<LinearLayout>(R.id.btn_skipped).setOnClickListener {
+            DrugRepository.updateMedicationStatus(drug.name, taken = false)
+            updatePrescriptionsList()
+            dialog.dismiss()
+        }
+        
+        // Cancel button
+        dialogView.findViewById<com.google.android.material.button.MaterialButton>(R.id.btn_cancel).setOnClickListener {
+            dialog.dismiss()
+        }
+        
+        dialog.show()
     }
 
     private fun updateDrugList() {

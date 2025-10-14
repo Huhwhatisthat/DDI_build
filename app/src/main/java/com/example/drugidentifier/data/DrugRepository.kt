@@ -108,6 +108,32 @@ object DrugRepository {
     }
     
     /**
+     * Update medication status for today (taken or skipped)
+     */
+    fun updateMedicationStatus(drugName: String, taken: Boolean) {
+        val today = getCurrentDate()
+        val index = drugs.indexOfFirst { it.name == drugName }
+        
+        if (index != -1) {
+            val drug = drugs[index]
+            val updatedDrug = drug.copy(
+                lastTakenDate = today,
+                todayStatus = taken
+            )
+            drugs[index] = updatedDrug
+            saveDrugsToStorage()
+        }
+    }
+    
+    /**
+     * Get current date in YYYY-MM-DD format
+     */
+    private fun getCurrentDate(): String {
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        return sdf.format(Date())
+    }
+    
+    /**
      * Parse time string to comparable format (24-hour)
      */
     private fun parseTime(timeStr: String): Int {
