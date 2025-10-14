@@ -4,10 +4,13 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.OptIn
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -27,10 +30,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var cameraExecutor: ExecutorService
     private lateinit var previewView: PreviewView
     private lateinit var resultTextView: TextView
+    private lateinit var captureButton: Button
     private var imageCapture: ImageCapture? = null
+    private var nicknameForScan: String? = null
 
-    // This Set will store all the ingredients scanned so far.
-    private val currentIngredients = mutableSetOf<String>()
+    // This set will store pairs of (Nickname, Ingredient)
+    private val currentDrugs = mutableSetOf<Pair<String, String>>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,23 +43,59 @@ class MainActivity : AppCompatActivity() {
 
         previewView = findViewById(R.id.camera_preview)
         resultTextView = findViewById(R.id.result_text)
-        val captureButton: Button = findViewById(R.id.capture_button)
+        captureButton = findViewById(R.id.capture_button)
+
+        // On startup, the button is for adding a new drug.
+        captureButton.text = "Add New Drug"
+        captureButton.setOnClickListener { showAddDrugDialog() }
+
+        // Hide camera preview initially
+        previewView.visibility = View.GONE
+
+        cameraExecutor = Executors.newSingleThreadExecutor()
 
         // Request camera permissions
-        if (allPermissionsGranted()) {
-            startCamera()
-        } else {
+        if (!allPermissionsGranted()) {
             ActivityCompat.requestPermissions(
                 this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS
             )
         }
+    }
 
+    private fun showAddDrugDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Add a New Drug")
+        builder.setMessage("What do you call this medicine? (e.g., Headache Pill)")
+
+        val input = EditText(this)
+        builder.setView(input)
+
+        builder.setPositiveButton("Next") { _, _ ->
+            val nickname = input.text.toString()
+            if (nickname.isNotBlank()) {
+                startIngredientScan(nickname)
+            } else {
+                Toast.makeText(this, "Please enter a name for your drug.", Toast.LENGTH_SHORT).show()
+            }
+        }
+        builder.setNegativeButton("Cancel") { dialog, _ -> dialog.cancel() }
+        builder.show()
+    }
+
+    private fun startIngredientScan(nickname: String) {
+        this.nicknameForScan = nickname
+
+        previewView.visibility = View.VISIBLE
+        captureButton.text = "Take Picture"
         captureButton.setOnClickListener { takePhoto() }
-        cameraExecutor = Executors.newSingleThreadExecutor()
+        resultTextView.text = "Scan the active ingredient for: $nickname"
+
+        startCamera()
     }
 
     private fun takePhoto() {
         val imageCapture = imageCapture ?: return
+        val nickname = nicknameForScan ?: return
 
         imageCapture.takePicture(
             ContextCompat.getMainExecutor(this),
@@ -64,7 +105,7 @@ class MainActivity : AppCompatActivity() {
                     val mediaImage = imageProxy.image
                     if (mediaImage != null) {
                         val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
-                        processImageWithMLKit(image, imageProxy)
+                        processImageForIngredient(image, imageProxy, nickname)
                     }
                 }
 
@@ -75,90 +116,93 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    private fun processImageWithMLKit(image: InputImage, imageProxy: ImageProxy) {
-        val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
-
-        recognizer.process(image)
+    private fun processImageForIngredient(image: InputImage, imageProxy: ImageProxy, nickname: String) {
+        TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+            .process(image)
             .addOnSuccessListener { visionText ->
-                val rawOcrText = visionText.text
-                val ingredients = extractIngredients(rawOcrText)
+                imageProxy.close()
+                val ingredients = extractIngredients(visionText.text)
 
                 if (ingredients.isNotEmpty()) {
-                    currentIngredients.addAll(ingredients)
-                    val capitalizedIngredients = ingredients.map { it.replaceFirstChar(Char::titlecase) }
-                    Toast.makeText(this, getString(R.string.ingredients_added, capitalizedIngredients.joinToString()), Toast.LENGTH_SHORT).show()
-
-                    // Use a coroutine to check for interactions in the background
-                    lifecycleScope.launch {
-                        resultTextView.text = getString(R.string.checking_for_interactions)
-                        val interactionResult = DrugApiClient.checkInteractions(currentIngredients.toList())
-                        val capitalizedCurrentIngredients = currentIngredients.map { it.replaceFirstChar(Char::titlecase) }
-                        val fullListText = getString(R.string.current_drugs, capitalizedCurrentIngredients.joinToString())
-                        val warningText = interactionResult ?: getString(R.string.no_interactions_found)
-
-                        resultTextView.text = "$fullListText\n$warningText"
-                    }
+                    val foundIngredient = ingredients.first()
+                    showConfirmationDialog(nickname, foundIngredient)
                 } else {
-                    Toast.makeText(this, getString(R.string.no_known_ingredients_found), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(baseContext, "Could not find a known ingredient. Please try again.", Toast.LENGTH_LONG).show()
+                    resetToInitialState()
                 }
-
-                imageProxy.close()
             }
             .addOnFailureListener { e ->
-                Log.e(TAG, "Text recognition failed", e)
-                Toast.makeText(baseContext, "Failed to recognize text.", Toast.LENGTH_SHORT).show()
                 imageProxy.close()
+                Log.e(TAG, "Text recognition failed", e)
+                resetToInitialState()
             }
     }
 
-    /**
-     * Parses raw OCR text to extract a list of known active ingredients.
-     * This version includes a map for common misspellings and Levenshtein distance for fuzzy matching.
-     * @param rawText The raw text string from ML Kit.
-     * @return A List of found ingredient names in lowercase.
-     */
+    private fun showConfirmationDialog(nickname: String, ingredient: String) {
+        AlertDialog.Builder(this)
+            .setTitle("Save this Drug?")
+            .setMessage("Your Name: $nickname\nIngredient Found: $ingredient")
+            .setPositiveButton("Save") { _, _ ->
+                saveDrugToDatabase(nickname, ingredient)
+            }
+            .setNegativeButton("Cancel") { _, _ -> resetToInitialState() }
+            .setOnCancelListener { resetToInitialState() }
+            .show()
+    }
+
+    private fun saveDrugToDatabase(nickname: String, ingredient: String) {
+        currentDrugs.add(nickname to ingredient)
+        Toast.makeText(this, "$nickname ($ingredient) saved!", Toast.LENGTH_SHORT).show()
+
+        val allIngredients = currentDrugs.map { it.second }
+
+        lifecycleScope.launch {
+            resultTextView.text = getString(R.string.checking_for_interactions)
+            val interactionResult = DrugApiClient.checkInteractions(allIngredients)
+            val drugListText = currentDrugs.joinToString("\n") { "- ${it.first} (${it.second})" }
+            val warningText = interactionResult ?: getString(R.string.no_interactions_found)
+
+            resultTextView.text = "Your Drugs:\n$drugListText\n\n$warningText"
+        }
+
+        resetToInitialState()
+    }
+    
+    private fun resetToInitialState() {
+        previewView.visibility = View.GONE
+        captureButton.text = "Add New Drug"
+        captureButton.setOnClickListener { showAddDrugDialog() }
+        nicknameForScan = null
+    }
+
     private fun extractIngredients(rawText: String): List<String> {
-        // Our dictionary of known drug ingredients.
         val knownIngredients = setOf(
             "paracetamol", "ibuprofen", "aspirin", "caffeine", "naproxen",
             "cetirizine", "loratadine", "diphenhydramine", "guaifenesin",
             "pseudoephedrine", "doxycycline", "calcium carbonate"
         )
-
-        // STRATEGY 3: A map to fix common, predictable OCR errors.
         val commonMisspellings = mapOf(
             "ibuproten" to "ibuprofen",
-            "lbuprofen" to "ibuprofen", // 'l' vs 'i'
-            "paracetamo1" to "paracetamol" // '1' vs 'l'
-            // Add more common errors here as you find them
+            "lbuprofen" to "ibuprofen",
+            "paracetamo1" to "paracetamol"
         )
-
-        // 1. Normalize and clean the text
         val cleanedText = rawText.lowercase()
             .replace(Regex("\\d+\\s*(mg|g)"), " ")
             .replace(Regex("[.,:;()]"), " ")
-
         val words = cleanedText.split(Regex("\\s+")).filter { it.isNotBlank() && it.length > 3 }
         val foundIngredients = mutableSetOf<String>()
-
         for (word in words) {
-            // First, check if the word is a known common misspelling
             if (commonMisspellings.containsKey(word)) {
                 val correctedWord = commonMisspellings[word]!!
                 foundIngredients.add(correctedWord)
-                continue // Move to the next word
+                continue
             }
-            
-            // If it's not a common misspelling, check if it's an exact match
             if (word in knownIngredients) {
                 foundIngredients.add(word)
-                continue // Move to the next word
+                continue
             }
-
-            // STRATEGY 1: If no exact match, use fuzzy matching (Levenshtein distance)
             var bestMatch: String? = null
-            var minDistance = 3 // Set a threshold (e.g., max 2 errors allowed)
-
+            var minDistance = 3
             for (known in knownIngredients) {
                 val distance = levenshtein(word, known)
                 if (distance < minDistance) {
@@ -166,13 +210,10 @@ class MainActivity : AppCompatActivity() {
                     bestMatch = known
                 }
             }
-
-            // If we found a close enough match, add it.
             if (bestMatch != null) {
                 foundIngredients.add(bestMatch)
             }
         }
-
         return foundIngredients.toList()
     }
 
@@ -207,7 +248,7 @@ class MainActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (allPermissionsGranted()) {
-                startCamera()
+                // Don't start camera automatically anymore
             } else {
                 Toast.makeText(this, "Permissions not granted by the user.", Toast.LENGTH_SHORT).show()
                 finish()
@@ -227,14 +268,9 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-/**
- * Calculates the Levenshtein distance between two strings.
- * This is a measure of how different two words are. A lower number means more similar.
- */
 fun levenshtein(lhs: String, rhs: String): Int {
     val lhsLength = lhs.length
     val rhsLength = rhs.length
-
     var cost = Array(lhsLength + 1) { it }
     var newCost = Array(lhsLength + 1) { 0 }
 
