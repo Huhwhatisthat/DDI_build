@@ -69,6 +69,8 @@ The app matches interactions based on **active ingredients**, not drug brand nam
 - **Interaction**: "Diphenhydramine ↔ Chlorpheniramine"
 - **Description**: "Severe drowsiness, impaired coordination, increased risk of accidents"
 
+**Note**: The key is alphabetically sorted: "chlorpheniramine|diphenhydramine"
+
 ---
 
 ### ✅ Test Case 6: LOW Severity Interaction

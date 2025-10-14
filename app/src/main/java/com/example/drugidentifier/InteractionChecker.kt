@@ -10,7 +10,7 @@ import com.example.drugidentifier.models.DrugInteraction.Severity
 object InteractionChecker {
 
     // Map of ingredient pairs to their interactions
-    // Key format: "ingredient1|ingredient2" (alphabetically sorted)
+    // Key format: "ingredient1|ingredient2" (alphabetically sorted, lowercase)
     private val knownInteractions = mapOf(
         // 1. Ibuprofen + Naproxen (Both NSAIDs)
         "ibuprofen|naproxen" to DrugInteraction(
@@ -23,7 +23,13 @@ object InteractionChecker {
         // 2. Antacids + Iron Supplements
         "antacid|iron" to DrugInteraction(
             drug1 = "Antacid",
-            drug2 = "Iron Supplement",
+            drug2 = "Iron",
+            severity = Severity.MODERATE,
+            description = "Reduced iron absorption, leading to treatment failure for anemia"
+        ),
+        "antacid|ferrous sulfate" to DrugInteraction(
+            drug1 = "Antacid",
+            drug2 = "Ferrous Sulfate",
             severity = Severity.MODERATE,
             description = "Reduced iron absorption, leading to treatment failure for anemia"
         ),
@@ -37,7 +43,7 @@ object InteractionChecker {
         ),
         
         // 4. Sedating Antihistamine + Sedating Antihistamine
-        "diphenhydramine|chlorpheniramine" to DrugInteraction(
+        "chlorpheniramine|diphenhydramine" to DrugInteraction(
             drug1 = "Diphenhydramine",
             drug2 = "Chlorpheniramine",
             severity = Severity.MODERATE,
@@ -77,13 +83,25 @@ object InteractionChecker {
         // 8. Acid Reducers (PPI/H2 Blockers) + Iron Supplements
         "iron|omeprazole" to DrugInteraction(
             drug1 = "Omeprazole",
-            drug2 = "Iron Supplement",
+            drug2 = "Iron",
+            severity = Severity.MODERATE,
+            description = "Reduced iron absorption due to decreased stomach acidity"
+        ),
+        "ferrous sulfate|omeprazole" to DrugInteraction(
+            drug1 = "Omeprazole",
+            drug2 = "Ferrous Sulfate",
             severity = Severity.MODERATE,
             description = "Reduced iron absorption due to decreased stomach acidity"
         ),
         "famotidine|iron" to DrugInteraction(
             drug1 = "Famotidine",
-            drug2 = "Iron Supplement",
+            drug2 = "Iron",
+            severity = Severity.MODERATE,
+            description = "Reduced iron absorption due to decreased stomach acidity"
+        ),
+        "famotidine|ferrous sulfate" to DrugInteraction(
+            drug1 = "Famotidine",
+            drug2 = "Ferrous Sulfate",
             severity = Severity.MODERATE,
             description = "Reduced iron absorption due to decreased stomach acidity"
         ),
@@ -120,19 +138,25 @@ object InteractionChecker {
     /**
      * Check for interactions between a list of active ingredients
      * @param ingredients List of active ingredient names
-     * @return List of detected interactions
+     * @return List of detected interactions (without duplicates)
      */
     fun checkInteractions(ingredients: List<String>): List<DrugInteraction> {
-        val interactions = mutableListOf<DrugInteraction>()
+        val interactions = mutableSetOf<DrugInteraction>() // Use Set to avoid duplicates
         
-        // Normalize ingredients to lowercase for comparison
+        // Normalize ingredients to lowercase and trim whitespace
         val normalizedIngredients = ingredients.map { it.lowercase().trim() }
         
+        // Remove duplicates from input
+        val uniqueIngredients = normalizedIngredients.distinct()
+        
         // Check all pairs of ingredients
-        for (i in normalizedIngredients.indices) {
-            for (j in i + 1 until normalizedIngredients.size) {
-                val ingredient1 = normalizedIngredients[i]
-                val ingredient2 = normalizedIngredients[j]
+        for (i in uniqueIngredients.indices) {
+            for (j in i + 1 until uniqueIngredients.size) {
+                val ingredient1 = uniqueIngredients[i]
+                val ingredient2 = uniqueIngredients[j]
+                
+                // Skip if both ingredients are the same
+                if (ingredient1 == ingredient2) continue
                 
                 // Create key (alphabetically sorted)
                 val key = if (ingredient1 < ingredient2) {
@@ -148,7 +172,7 @@ object InteractionChecker {
             }
         }
         
-        return interactions
+        return interactions.toList()
     }
 
     /**
