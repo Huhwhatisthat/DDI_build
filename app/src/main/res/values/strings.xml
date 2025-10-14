@@ -14,7 +14,7 @@
     <string name="top_section_placeholder">Content will be added here</string>
     <string name="actions_title">Quick Actions</string>
     <string name="action_scan_drug">Scan</string>
-    <string name="action_add_drug">Add Drug</string>
+    <string name="action_add_drug">Add Medication</string>
     <string name="action_view_drugs">My Drugs</string>
     <string name="action_check_interactions">Interactions</string>
     <string name="my_medications_title">My Medications</string>

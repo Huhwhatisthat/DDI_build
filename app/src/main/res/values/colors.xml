@@ -4,6 +4,8 @@
     <color name="white">#FFFFFFFF</color>
     
     <!-- Modern Color Palette -->
+    <color name="primary">#5B7FFF</color>
+    <color name="primary_lighter">#A8BBFF</color>
     <color name="primary_blue">#5B7FFF</color>
     <color name="primary_blue_dark">#4A6AD8</color>
     <color name="accent_teal">#4ECDC4</color>
@@ -16,12 +18,17 @@
     <color name="top_section_background">#FFFFFF</color>
     <color name="bottom_section_background">#FFFFFF</color>
     <color name="card_background">#FFFFFF</color>
+    <color name="surface">#F8F9FD</color>
     <color name="surface_light">#F5F7FB</color>
     
     <!-- Text Colors -->
     <color name="primary_text">#1A1F36</color>
+    <color name="text_secondary">#8B94A8</color>
     <color name="secondary_text">#8B94A8</color>
     <color name="text_on_primary">#FFFFFF</color>
+
+    <!-- Border Color -->
+    <color name="border">#E0E0E0</color>
     
     <!-- Drug Card Colors -->
     <color name="drug_card_background">#F0F4FF</color>
@@ -40,6 +47,9 @@
     <color name="card_interact_gradient_end">#FC6E51</color>
     
     <!-- Status Colors -->
+    <color name="status_safe">#6BCF7F</color>
+    <color name="status_danger">#FF6B6B</color>
+    <color name="danger">#FF6B6B</color>
     <color name="success">#6BCF7F</color>
     <color name="warning">#FFB84D</color>
     <color name="error">#FF6B6B</color>
