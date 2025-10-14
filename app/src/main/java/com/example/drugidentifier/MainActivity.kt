@@ -34,6 +34,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var captureButton: Button
     private var imageCapture: ImageCapture? = null
     private var nicknameForScan: String? = null
+    private var showingInteractions = false
 
     // Using the shared repository instead of local storage
 
@@ -76,12 +77,8 @@ class MainActivity : AppCompatActivity() {
                 showAddDrugDialog()
             }
             "VIEW_DRUGS" -> {
-                // Display current drugs
-                displayCurrentDrugs()
-            }
-            "CHECK_INTERACTIONS" -> {
-                // Check interactions for current drugs
-                checkCurrentInteractions()
+                // Display current drugs with interaction check option
+                displayCurrentDrugsWithInteractionOption()
             }
         }
     }
@@ -95,26 +92,112 @@ class MainActivity : AppCompatActivity() {
         }
     }
     
-    private fun checkCurrentInteractions() {
+    private fun displayCurrentDrugsWithInteractionOption() {
         if (DrugRepository.isEmpty()) {
-            resultTextView.text = "No drugs to check.\n\nPlease add at least 2 drugs to check for interactions."
+            resultTextView.text = "No drugs saved yet.\n\nReturn to home and tap 'Add Drug' to get started."
+            captureButton.text = "Back to Home"
+            captureButton.setOnClickListener { finish() }
             return
         }
         
+        // Initially show drugs without interactions
+        showingInteractions = false
+        displayDrugsOnly()
+        
+        // Change button to "Check Interactions"
+        captureButton.text = "Check Interactions"
+        captureButton.setOnClickListener {
+            if (!showingInteractions) {
+                checkAndHighlightInteractions()
+            } else {
+                displayDrugsOnly()
+            }
+        }
+    }
+    
+    private fun displayDrugsOnly() {
+        showingInteractions = false
+        captureButton.text = "Check Interactions"
+        
+        val drugListText = DrugRepository.getAllDrugs().joinToString("\n\n") { 
+            "💊 ${it.first}\n   Active: ${it.second}" 
+        }
+        
+        resultTextView.text = "═══ My Medications ═══\n\n$drugListText\n\n" +
+                "Tap 'Check Interactions' to verify safety"
+    }
+    
+    private fun checkAndHighlightInteractions() {
         if (DrugRepository.size() < 2) {
-            resultTextView.text = "You need at least 2 drugs to check for interactions.\n\nCurrent drugs: ${DrugRepository.size()}"
+            resultTextView.text = "You need at least 2 drugs to check for interactions.\n\n" +
+                    "Current drugs: ${DrugRepository.size()}\n\nAdd more drugs to check for interactions."
             return
         }
+        
+        showingInteractions = true
+        captureButton.text = "Hide Interactions"
         
         val allIngredients = DrugRepository.getAllIngredients()
         lifecycleScope.launch {
             resultTextView.text = getString(R.string.checking_for_interactions)
+            
             val interactionResult = DrugApiClient.checkInteractions(allIngredients)
-            val drugListText = DrugRepository.getAllDrugs().joinToString("\n") { "- ${it.first} (${it.second})" }
-            val warningText = interactionResult ?: getString(R.string.no_interactions_found)
-
-            resultTextView.text = "Your Drugs:\n$drugListText\n\n$warningText"
+            
+            // Build the display with highlighting
+            val drugsWithStatus = buildString {
+                append("═══ My Medications ═══\n\n")
+                
+                // Get all drugs
+                val drugs = DrugRepository.getAllDrugs().toList()
+                
+                if (interactionResult != null && interactionResult != "No interactions found.") {
+                    // Parse interaction to find involved drugs
+                    val involvedIngredients = findInvolvedIngredients(interactionResult, allIngredients)
+                    
+                    drugs.forEach { drug ->
+                        if (involvedIngredients.contains(drug.second.lowercase())) {
+                            // Highlight drugs with interactions
+                            append("⚠️ ${drug.first}\n")
+                            append("   Active: ${drug.second}\n")
+                            append("   ⚠️ HAS INTERACTION\n\n")
+                        } else {
+                            append("✅ ${drug.first}\n")
+                            append("   Active: ${drug.second}\n")
+                            append("   ✅ Safe\n\n")
+                        }
+                    }
+                    
+                    append("\n═══ INTERACTION WARNING ═══\n\n")
+                    append(interactionResult)
+                } else {
+                    // No interactions found
+                    drugs.forEach { drug ->
+                        append("✅ ${drug.first}\n")
+                        append("   Active: ${drug.second}\n")
+                        append("   ✅ Safe\n\n")
+                    }
+                    
+                    append("\n═══ ✅ All Clear ═══\n\n")
+                    append("No dangerous interactions detected between your medications.")
+                }
+            }
+            
+            resultTextView.text = drugsWithStatus
         }
+    }
+    
+    private fun findInvolvedIngredients(interactionText: String, allIngredients: List<String>): Set<String> {
+        val involved = mutableSetOf<String>()
+        allIngredients.forEach { ingredient ->
+            if (interactionText.lowercase().contains(ingredient.lowercase())) {
+                involved.add(ingredient.lowercase())
+            }
+        }
+        return involved
+    }
+    
+    private fun checkCurrentInteractions() {
+        checkAndHighlightInteractions()
     }
 
     private fun showAddDrugDialog() {

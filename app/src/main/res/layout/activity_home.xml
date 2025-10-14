@@ -98,50 +98,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:columnCount="2"
-            app:rowCount="2"
+            app:rowCount="1"
             app:useDefaultMargins="true">
 
-            <!-- Scan Drug Card -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/card_scan_drug"
-                android:layout_width="0dp"
-                android:layout_height="140dp"
-                app:layout_columnWeight="1"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp"
-                app:cardBackgroundColor="@color/card_background"
-                android:layout_margin="8dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?android:attr/selectableItemBackground">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="📷"
-                        android:textSize="40sp"
-                        android:layout_marginBottom="8dp"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/action_scan_drug"
-                        android:textSize="16sp"
-                        android:textColor="@color/primary_text"
-                        android:textStyle="bold"
-                        android:gravity="center"/>
-
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- Add Drug Card -->
+            <!-- Add Drug Card (with scan option) -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/card_add_drug"
                 android:layout_width="0dp"
@@ -181,7 +141,7 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- View My Drugs Card -->
+            <!-- View My Drugs Card (with interactions check) -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/card_view_drugs"
                 android:layout_width="0dp"
@@ -213,46 +173,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/action_view_drugs"
-                        android:textSize="16sp"
-                        android:textColor="@color/primary_text"
-                        android:textStyle="bold"
-                        android:gravity="center"/>
-
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- Check Interactions Card -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/card_check_interactions"
-                android:layout_width="0dp"
-                android:layout_height="140dp"
-                app:layout_columnWeight="1"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp"
-                app:cardBackgroundColor="@color/card_background"
-                android:layout_margin="8dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?android:attr/selectableItemBackground">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="⚠️"
-                        android:textSize="40sp"
-                        android:layout_marginBottom="8dp"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/action_check_interactions"
                         android:textSize="16sp"
                         android:textColor="@color/primary_text"
                         android:textStyle="bold"

@@ -15,11 +15,11 @@
     <string name="actions_title">What would you like to do?</string>
     <string name="action_scan_drug">Scan Drug</string>
     <string name="action_add_drug">Add Drug</string>
-    <string name="action_view_drugs">View My Drugs</string>
+    <string name="action_view_drugs">View My Drugs &amp; Check Interactions</string>
     <string name="action_check_interactions">Check Interactions</string>
     <string name="my_medications_title">My Medications</string>
     <string name="no_drugs_yet">No medications saved yet</string>
-    <string name="add_drug_hint">Tap \"Scan Drug\" or \"Add Drug\" below to get started</string>
+    <string name="add_drug_hint">Tap \"Add Drug\" below to get started</string>
     <string name="delete_drug_confirmation">Delete %s?</string>
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>

@@ -80,40 +80,44 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun setupActionCards() {
-        // Scan Drug action
-        val scanDrugCard = findViewById<CardView>(R.id.card_scan_drug)
-        scanDrugCard.setOnClickListener {
-            // Navigate to MainActivity for scanning
-            val intent = Intent(this, MainActivity::class.java)
-            intent.putExtra("ACTION", "SCAN_DRUG")
-            startActivity(intent)
-        }
-
-        // Add Drug Manually action
+        // Add Drug action (with scan option)
         val addDrugCard = findViewById<CardView>(R.id.card_add_drug)
         addDrugCard.setOnClickListener {
-            // Navigate to MainActivity for adding drug
-            val intent = Intent(this, MainActivity::class.java)
-            intent.putExtra("ACTION", "ADD_DRUG")
-            startActivity(intent)
+            showAddDrugOptions()
         }
 
-        // View My Drugs action
+        // View My Drugs action (with interactions check)
         val viewDrugsCard = findViewById<CardView>(R.id.card_view_drugs)
         viewDrugsCard.setOnClickListener {
-            // Navigate to MainActivity to view drugs
+            // Navigate to MainActivity to view drugs with interactions
             val intent = Intent(this, MainActivity::class.java)
             intent.putExtra("ACTION", "VIEW_DRUGS")
             startActivity(intent)
         }
+    }
 
-        // Check Interactions action
-        val checkInteractionsCard = findViewById<CardView>(R.id.card_check_interactions)
-        checkInteractionsCard.setOnClickListener {
-            // Navigate to MainActivity to check interactions
-            val intent = Intent(this, MainActivity::class.java)
-            intent.putExtra("ACTION", "CHECK_INTERACTIONS")
-            startActivity(intent)
-        }
+    private fun showAddDrugOptions() {
+        val options = arrayOf("📷 Scan Drug Label", "✍️ Enter Manually")
+        
+        AlertDialog.Builder(this)
+            .setTitle("Add Drug")
+            .setItems(options) { _, which ->
+                when (which) {
+                    0 -> {
+                        // Scan Drug
+                        val intent = Intent(this, MainActivity::class.java)
+                        intent.putExtra("ACTION", "SCAN_DRUG")
+                        startActivity(intent)
+                    }
+                    1 -> {
+                        // Add Drug Manually
+                        val intent = Intent(this, MainActivity::class.java)
+                        intent.putExtra("ACTION", "ADD_DRUG")
+                        startActivity(intent)
+                    }
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 }
