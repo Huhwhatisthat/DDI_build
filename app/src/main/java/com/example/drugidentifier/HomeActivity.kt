@@ -7,7 +7,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.drugidentifier.data.DrugRepository
@@ -17,7 +16,6 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var drugsRecyclerView: RecyclerView
     private lateinit var emptyState: LinearLayout
     private lateinit var drugListAdapter: DrugListAdapter
-    private lateinit var medicationCountText: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,9 +23,6 @@ class HomeActivity : AppCompatActivity() {
 
         // Initialize the repository
         DrugRepository.init(this)
-
-        // Initialize views
-        medicationCountText = findViewById(R.id.medication_count)
 
         // Set up RecyclerView
         setupRecyclerView()
@@ -61,14 +56,6 @@ class HomeActivity : AppCompatActivity() {
     private fun updateDrugList() {
         val drugs = DrugRepository.getAllDrugs().toList()
         
-        // Update medication count
-        val count = drugs.size
-        medicationCountText.text = when (count) {
-            0 -> "You have no medications yet"
-            1 -> "You have 1 medication"
-            else -> "You have $count medications"
-        }
-        
         if (drugs.isEmpty()) {
             drugsRecyclerView.visibility = View.GONE
             emptyState.visibility = View.VISIBLE
@@ -80,7 +67,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun showDeleteConfirmation(drug: Pair<String, String>) {
-        AlertDialog.Builder(this, R.style.Theme_DrugIdentifier)
+        AlertDialog.Builder(this)
             .setTitle(getString(R.string.delete_drug_confirmation, drug.first))
             .setMessage("${drug.first}\n${drug.second}")
             .setPositiveButton(getString(R.string.delete)) { _, _ ->
@@ -92,44 +79,40 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun setupActionCards() {
-        // Add Drug action (with scan option)
-        val addDrugCard = findViewById<CardView>(R.id.card_add_drug)
-        addDrugCard.setOnClickListener {
-            showAddDrugOptions()
+        // Scan Drug action
+        val scanDrugCard = findViewById<LinearLayout>(R.id.card_scan_drug)
+        scanDrugCard.setOnClickListener {
+            // Navigate to MainActivity for scanning
+            val intent = Intent(this, MainActivity::class.java)
+            intent.putExtra("ACTION", "SCAN_DRUG")
+            startActivity(intent)
         }
 
-        // View My Drugs action (with interactions check)
-        val viewDrugsCard = findViewById<CardView>(R.id.card_view_drugs)
+        // Add Drug Manually action
+        val addDrugCard = findViewById<LinearLayout>(R.id.card_add_drug)
+        addDrugCard.setOnClickListener {
+            // Navigate to MainActivity for adding drug
+            val intent = Intent(this, MainActivity::class.java)
+            intent.putExtra("ACTION", "ADD_DRUG")
+            startActivity(intent)
+        }
+
+        // View My Drugs action
+        val viewDrugsCard = findViewById<LinearLayout>(R.id.card_view_drugs)
         viewDrugsCard.setOnClickListener {
-            // Navigate to MainActivity to view drugs with interactions
+            // Navigate to MainActivity to view drugs
             val intent = Intent(this, MainActivity::class.java)
             intent.putExtra("ACTION", "VIEW_DRUGS")
             startActivity(intent)
         }
-    }
 
-    private fun showAddDrugOptions() {
-        val options = arrayOf("📷  Scan Drug Label", "✍️  Enter Manually")
-        
-        AlertDialog.Builder(this, R.style.Theme_DrugIdentifier)
-            .setTitle("Add Medication")
-            .setItems(options) { _, which ->
-                when (which) {
-                    0 -> {
-                        // Scan Drug
-                        val intent = Intent(this, MainActivity::class.java)
-                        intent.putExtra("ACTION", "SCAN_DRUG")
-                        startActivity(intent)
-                    }
-                    1 -> {
-                        // Add Drug Manually
-                        val intent = Intent(this, MainActivity::class.java)
-                        intent.putExtra("ACTION", "ADD_DRUG")
-                        startActivity(intent)
-                    }
-                }
-            }
-            .setNegativeButton("Cancel", null)
-            .show()
+        // Check Interactions action
+        val checkInteractionsCard = findViewById<LinearLayout>(R.id.card_check_interactions)
+        checkInteractionsCard.setOnClickListener {
+            // Navigate to MainActivity to check interactions
+            val intent = Intent(this, MainActivity::class.java)
+            intent.putExtra("ACTION", "CHECK_INTERACTIONS")
+            startActivity(intent)
+        }
     }
 }
