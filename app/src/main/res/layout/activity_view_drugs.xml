@@ -33,13 +33,14 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/back_button_description"
                 app:tint="@color/primary_text"/>
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="My Medications"
+                android:text="@string/my_medications_title"
                 android:textSize="24sp"
                 android:textColor="@color/primary_text"
                 android:fontFamily="sans-serif-medium"
@@ -49,7 +50,7 @@
                 android:id="@+id/drug_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0"
+                android:text="@string/drug_count_default"
                 android:textSize="14sp"
                 android:textColor="@color/white"
                 android:fontFamily="sans-serif-medium"
@@ -77,13 +78,14 @@
                 android:layout_height="24dp"
                 android:src="@drawable/ic_warning"
                 android:layout_marginEnd="12dp"
+                android:contentDescription="@string/warning_icon_description"
                 app:tint="@color/warning"/>
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Check for Interactions"
+                android:text="@string/check_for_interactions"
                 android:textSize="15sp"
                 android:textColor="@color/primary_text"
                 android:fontFamily="sans-serif-medium"/>
@@ -91,7 +93,8 @@
             <ImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:src="@drawable/ic_arrow_right"
+                android:src="@android:drawable/ic_media_play"
+                android:contentDescription="@string/arrow_icon_description"
                 app:tint="@color/secondary_text"/>
 
         </LinearLayout>
@@ -126,12 +129,13 @@
             android:src="@drawable/ic_medications"
             android:alpha="0.3"
             android:layout_marginBottom="24dp"
+            android:contentDescription="@string/medications_icon_description"
             app:tint="@color/secondary_text"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="No medications yet"
+            android:text="@string/no_medications_yet"
             android:textSize="20sp"
             android:textColor="@color/primary_text"
             android:fontFamily="sans-serif-medium"
@@ -140,7 +144,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add your first medication to get started"
+            android:text="@string/add_first_medication_prompt"
             android:textSize="14sp"
             android:textColor="@color/secondary_text"
             android:fontFamily="sans-serif"

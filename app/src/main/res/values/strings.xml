@@ -23,4 +23,16 @@
     <string name="delete_drug_confirmation">Delete %s?</string>
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
+
+    <!-- Content Descriptions -->
+    <string name="back_button_description">Back button</string>
+    <string name="warning_icon_description">Warning icon</string>
+    <string name="arrow_icon_description">Arrow icon</string>
+    <string name="medications_icon_description">Medications icon</string>
+
+    <!-- View Drugs Screen -->
+    <string name="drug_count_default">0</string>
+    <string name="check_for_interactions">Check for Interactions</string>
+    <string name="no_medications_yet">No medications yet</string>
+    <string name="add_first_medication_prompt">Add your first medication to get started</string>
 </resources>
