@@ -11,7 +11,6 @@ import com.example.drugidentifier.data.DrugRepository
 
 class ViewDrugsActivity : AppCompatActivity() {
 
-    private lateinit var drugRepository: DrugRepository
     private lateinit var recyclerView: RecyclerView
     private lateinit var emptyStateContainer: View
     private lateinit var drugCountBadge: TextView
@@ -21,13 +20,13 @@ class ViewDrugsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_view_drugs)
 
-        drugRepository = DrugRepository(this)
+        DrugRepository.init(this)
 
         // Initialize views
         val backButton = findViewById<ImageView>(R.id.back_button)
-        recyclerView = findViewById(R.id.drugs_recycler_view)
-        emptyStateContainer = findViewById(R.id.empty_state_container)
-        drugCountBadge = findViewById(R.id.drug_count_badge)
+        recyclerView = findViewById(R.id.drugs_list)
+        emptyStateContainer = findViewById(R.id.empty_state)
+        drugCountBadge = findViewById(R.id.drug_count)
 
         // Back button
         backButton.setOnClickListener {
@@ -53,7 +52,7 @@ class ViewDrugsActivity : AppCompatActivity() {
     }
 
     private fun loadDrugs() {
-        val drugs = drugRepository.getDrugsList()
+        val drugs = DrugRepository.getDrugsList()
         
         if (drugs.isEmpty()) {
             // Show empty state
@@ -75,7 +74,7 @@ class ViewDrugsActivity : AppCompatActivity() {
             .setTitle("Delete Medication")
             .setMessage("Are you sure you want to delete $drugName?")
             .setPositiveButton("Delete") { _, _ ->
-                drugRepository.deleteDrug(drugName)
+                DrugRepository.deleteDrug(drugName)
                 loadDrugs() // Refresh list
             }
             .setNegativeButton("Cancel", null)
