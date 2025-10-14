@@ -14,26 +14,63 @@
         android:layout_weight="1"
         android:orientation="vertical"
         android:background="@color/top_section_background"
-        android:gravity="center"
-        android:padding="24dp">
+        android:padding="16dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/welcome_message"
-            android:textSize="24sp"
+            android:text="@string/my_medications_title"
+            android:textSize="20sp"
             android:textColor="@color/primary_text"
             android:textStyle="bold"
-            android:gravity="center"/>
+            android:layout_marginBottom="12dp"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/top_section_placeholder"
-            android:textSize="14sp"
-            android:textColor="@color/secondary_text"
-            android:layout_marginTop="8dp"
-            android:gravity="center"/>
+        <!-- Horizontal ScrollView for Drug Cards -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/drugs_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:clipToPadding="false"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"/>
+
+        <!-- Empty State Message -->
+        <LinearLayout
+            android:id="@+id/empty_state"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="💊"
+                android:textSize="64sp"
+                android:layout_marginBottom="16dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/no_drugs_yet"
+                android:textSize="16sp"
+                android:textColor="@color/secondary_text"
+                android:gravity="center"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/add_drug_hint"
+                android:textSize="14sp"
+                android:textColor="@color/secondary_text"
+                android:layout_marginTop="8dp"
+                android:gravity="center"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 

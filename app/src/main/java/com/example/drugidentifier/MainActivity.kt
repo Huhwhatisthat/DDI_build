@@ -41,6 +41,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Initialize the repository
+        DrugRepository.init(this)
+
         previewView = findViewById(R.id.camera_preview)
         resultTextView = findViewById(R.id.result_text)
         captureButton = findViewById(R.id.capture_button)

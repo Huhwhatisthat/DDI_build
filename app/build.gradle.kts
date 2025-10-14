@@ -51,6 +51,9 @@ dependencies {
     
     // For CardView
     implementation("androidx.cardview:cardview:1.0.0")
+    
+    // For JSON serialization (data persistence)
+    implementation("com.google.code.gson:gson:2.10.1")
 
     // For easily handling the camera
     val cameraxVersion = "1.3.1"
