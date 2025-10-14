@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="black">#FF000000</color>
-    <color name="white">#FFF8F3F0</color>
+    <color name="white">#F5EEEB</color>
     
     <!-- New Color Palette - Warm Neutrals Theme -->
     <color name="palette_lightest">#F2E9E4</color>
@@ -22,9 +22,9 @@
     
     <!-- Background Colors -->
     <color name="background_color">#F2E9E4</color>
-    <color name="top_section_background">#E0CAC1</color>
+    <color name="top_section_background">#F5EEEB</color>
     <color name="bottom_section_background">#F2E9E4</color>
-    <color name="card_background">#E0CAC1</color>
+    <color name="card_background">#F5EEEB</color>
     <color name="surface">#F2E9E4</color>
     <color name="surface_light">#F2E9E4</color>
     
@@ -32,13 +32,13 @@
     <color name="primary_text">#22223B</color>
     <color name="text_secondary">#9A8C98</color>
     <color name="secondary_text">#9A8C98</color>
-    <color name="text_on_primary">#FFF8F3F0</color>
+    <color name="text_on_primary">#F5EEEB</color>
 
     <!-- Border Color -->
     <color name="border">#C9ADA7</color>
     
     <!-- Drug Card Colors -->
-    <color name="drug_card_background">#E0CAC1</color>
+    <color name="drug_card_background">#F5EEEB</color>
     <color name="drug_card_accent">#F2E9E4</color>
     <color name="ingredient_badge_background">#C9ADA7</color>
     <color name="ingredient_badge_text">#22223B</color>
