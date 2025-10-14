@@ -90,9 +90,8 @@ class HomeActivity : AppCompatActivity() {
         // View My Drugs action
         val viewDrugsCard = findViewById<LinearLayout>(R.id.card_view_drugs)
         viewDrugsCard.setOnClickListener {
-            // Navigate to MainActivity to view drugs
-            val intent = Intent(this, MainActivity::class.java)
-            intent.putExtra("ACTION", "VIEW_DRUGS")
+            // Navigate to ViewDrugsActivity
+            val intent = Intent(this, ViewDrugsActivity::class.java)
             startActivity(intent)
         }
 

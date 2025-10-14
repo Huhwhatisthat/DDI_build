@@ -34,6 +34,12 @@
             android:exported="false">
         </activity>
         
+        <!-- View Drugs Activity - Scrollable Drug List -->
+        <activity
+            android:name=".ViewDrugsActivity"
+            android:exported="false">
+        </activity>
+        
         <!-- Main Activity - Drug Scanner -->
         <activity
             android:name=".MainActivity"
