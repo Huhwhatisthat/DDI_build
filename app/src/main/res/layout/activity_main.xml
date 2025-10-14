@@ -4,36 +4,91 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/black"
     tools:context=".MainActivity">
 
     <androidx.camera.view.PreviewView
         android:id="@+id/camera_preview"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/capture_button"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_controls"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/capture_button"
-        android:layout_width="wrap_content"
+    <!-- Top Overlay with Results -->
+    <LinearLayout
+        android:id="@+id/result_container"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/take_picture"
-        android:layout_marginBottom="32dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/result_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/recognized_text_placeholder"
-        android:textColor="@android:color/white"
-        android:background="#80000000"
-        android:padding="8dp"
+        android:orientation="vertical"
+        android:background="@drawable/bg_result_overlay"
+        android:padding="20dp"
+        android:layout_margin="16dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"/>
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Scan Result"
+            android:textSize="14sp"
+            android:textColor="@color/secondary_text"
+            android:fontFamily="sans-serif-medium"
+            android:layout_marginBottom="4dp"/>
+
+        <TextView
+            android:id="@+id/result_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/recognized_text_placeholder"
+            android:textColor="@color/primary_text"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif"
+            android:maxLines="4"
+            android:ellipsize="end"/>
+
+    </LinearLayout>
+
+    <!-- Bottom Controls -->
+    <LinearLayout
+        android:id="@+id/bottom_controls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="32dp"
+        android:background="@drawable/bg_bottom_controls"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/capture_button"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:insetLeft="0dp"
+            android:insetTop="0dp"
+            android:insetRight="0dp"
+            android:insetBottom="0dp"
+            app:cornerRadius="36dp"
+            app:icon="@drawable/ic_camera"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp"
+            app:iconSize="32dp"
+            app:iconTint="@color/white"
+            android:backgroundTint="@color/primary_blue"
+            app:rippleColor="@color/primary_blue_dark"
+            app:strokeWidth="4dp"
+            app:strokeColor="@color/white"
+            android:elevation="8dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/take_picture"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif-medium"
+            android:layout_marginTop="12dp"/>
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

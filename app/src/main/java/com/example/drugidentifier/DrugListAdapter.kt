@@ -3,6 +3,7 @@ package com.example.drugidentifier
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
@@ -32,7 +33,7 @@ class DrugListAdapter(
     inner class DrugViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val nicknameTextView: TextView = itemView.findViewById(R.id.drug_nickname)
         private val ingredientTextView: TextView = itemView.findViewById(R.id.drug_ingredient)
-        private val deleteButton: TextView = itemView.findViewById(R.id.delete_button)
+        private val deleteButton: ImageView = itemView.findViewById(R.id.delete_button)
 
         fun bind(drug: Pair<String, String>) {
             nicknameTextView.text = drug.first

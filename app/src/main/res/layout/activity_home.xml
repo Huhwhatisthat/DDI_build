@@ -1,268 +1,287 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:fillViewport="true"
     android:background="@color/background_color">
 
-    <!-- Top Section - Reserved for Future Use -->
     <LinearLayout
-        android:id="@+id/top_section"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="@color/top_section_background"
-        android:padding="16dp">
+        android:paddingBottom="24dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/my_medications_title"
-            android:textSize="20sp"
-            android:textColor="@color/primary_text"
-            android:textStyle="bold"
-            android:layout_marginBottom="12dp"/>
-
-        <!-- Horizontal ScrollView for Drug Cards -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/drugs_recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal"
-            android:clipToPadding="false"
-            android:paddingStart="4dp"
-            android:paddingEnd="4dp"/>
-
-        <!-- Empty State Message -->
+        <!-- Header Section -->
         <LinearLayout
-            android:id="@+id/empty_state"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:gravity="center"
-            android:visibility="gone">
+            android:background="@color/top_section_background"
+            android:paddingHorizontal="24dp"
+            android:paddingTop="32dp"
+            android:paddingBottom="24dp"
+            android:elevation="2dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="💊"
-                android:textSize="64sp"
-                android:layout_marginBottom="16dp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/no_drugs_yet"
-                android:textSize="16sp"
+                android:text="Hello,"
+                android:textSize="18sp"
                 android:textColor="@color/secondary_text"
-                android:gravity="center"/>
+                android:fontFamily="sans-serif-medium"
+                android:layout_marginBottom="4dp"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/add_drug_hint"
-                android:textSize="14sp"
-                android:textColor="@color/secondary_text"
-                android:layout_marginTop="8dp"
-                android:gravity="center"/>
+                android:text="@string/my_medications_title"
+                android:textSize="32sp"
+                android:textColor="@color/primary_text"
+                android:fontFamily="sans-serif-black"
+                android:letterSpacing="-0.02"/>
+
+        </LinearLayout>
+
+        <!-- Medications Section -->
+        <LinearLayout
+            android:id="@+id/top_section"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/background_color"
+            android:paddingTop="24dp"
+            android:paddingBottom="16dp">
+
+            <!-- Horizontal ScrollView for Drug Cards -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/drugs_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="220dp"
+                android:orientation="horizontal"
+                android:clipToPadding="false"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"/>
+
+            <!-- Empty State Message -->
+            <LinearLayout
+                android:id="@+id/empty_state"
+                android:layout_width="match_parent"
+                android:layout_height="220dp"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:visibility="gone"
+                android:paddingHorizontal="40dp">
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/ic_medications"
+                    android:alpha="0.3"
+                    android:layout_marginBottom="16dp"
+                    app:tint="@color/secondary_text"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_drugs_yet"
+                    android:textSize="18sp"
+                    android:textColor="@color/primary_text"
+                    android:fontFamily="sans-serif-medium"
+                    android:gravity="center"
+                    android:layout_marginBottom="8dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/add_drug_hint"
+                    android:textSize="14sp"
+                    android:textColor="@color/secondary_text"
+                    android:fontFamily="sans-serif"
+                    android:gravity="center"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Actions Section -->
+        <LinearLayout
+            android:id="@+id/bottom_section"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/background_color"
+            android:paddingHorizontal="20dp"
+            android:paddingTop="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/actions_title"
+                android:textSize="20sp"
+                android:textColor="@color/primary_text"
+                android:fontFamily="sans-serif-medium"
+                android:layout_marginBottom="20dp"/>
+
+            <!-- Grid of Action Cards -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- First Row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="16dp">
+
+                    <!-- Scan Drug Card -->
+                    <LinearLayout
+                        android:id="@+id/card_scan_drug"
+                        android:layout_width="0dp"
+                        android:layout_height="160dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_card_scan"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="20dp"
+                        android:layout_marginEnd="8dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?android:attr/selectableItemBackground">
+
+                        <ImageView
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:src="@drawable/ic_camera"
+                            android:layout_marginBottom="12dp"
+                            app:tint="@color/white"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/action_scan_drug"
+                            android:textSize="16sp"
+                            android:textColor="@color/white"
+                            android:fontFamily="sans-serif-medium"
+                            android:gravity="center"/>
+
+                    </LinearLayout>
+
+                    <!-- Add Drug Card -->
+                    <LinearLayout
+                        android:id="@+id/card_add_drug"
+                        android:layout_width="0dp"
+                        android:layout_height="160dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_card_add"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="20dp"
+                        android:layout_marginStart="8dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?android:attr/selectableItemBackground">
+
+                        <ImageView
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:src="@drawable/ic_add"
+                            android:layout_marginBottom="12dp"
+                            app:tint="@color/white"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/action_add_drug"
+                            android:textSize="16sp"
+                            android:textColor="@color/white"
+                            android:fontFamily="sans-serif-medium"
+                            android:gravity="center"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <!-- Second Row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <!-- View My Drugs Card -->
+                    <LinearLayout
+                        android:id="@+id/card_view_drugs"
+                        android:layout_width="0dp"
+                        android:layout_height="160dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_card_view"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="20dp"
+                        android:layout_marginEnd="8dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?android:attr/selectableItemBackground">
+
+                        <ImageView
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:src="@drawable/ic_medications"
+                            android:layout_marginBottom="12dp"
+                            app:tint="@color/white"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/action_view_drugs"
+                            android:textSize="16sp"
+                            android:textColor="@color/white"
+                            android:fontFamily="sans-serif-medium"
+                            android:gravity="center"/>
+
+                    </LinearLayout>
+
+                    <!-- Check Interactions Card -->
+                    <LinearLayout
+                        android:id="@+id/card_check_interactions"
+                        android:layout_width="0dp"
+                        android:layout_height="160dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_card_interact"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="20dp"
+                        android:layout_marginStart="8dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?android:attr/selectableItemBackground">
+
+                        <ImageView
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:src="@drawable/ic_warning"
+                            android:layout_marginBottom="12dp"
+                            app:tint="@color/white"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/action_check_interactions"
+                            android:textSize="16sp"
+                            android:textColor="@color/white"
+                            android:fontFamily="sans-serif-medium"
+                            android:gravity="center"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
 
         </LinearLayout>
 
     </LinearLayout>
 
-    <!-- Bottom Section - Action Cards -->
-    <LinearLayout
-        android:id="@+id/bottom_section"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:background="@color/bottom_section_background"
-        android:padding="16dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/actions_title"
-            android:textSize="20sp"
-            android:textColor="@color/primary_text"
-            android:textStyle="bold"
-            android:layout_marginBottom="16dp"/>
-
-        <!-- Grid of Action Cards -->
-        <androidx.gridlayout.widget.GridLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:columnCount="2"
-            app:rowCount="2"
-            app:useDefaultMargins="true">
-
-            <!-- Scan Drug Card -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/card_scan_drug"
-                android:layout_width="0dp"
-                android:layout_height="140dp"
-                app:layout_columnWeight="1"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp"
-                app:cardBackgroundColor="@color/card_background"
-                android:layout_margin="8dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?android:attr/selectableItemBackground">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="📷"
-                        android:textSize="40sp"
-                        android:layout_marginBottom="8dp"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/action_scan_drug"
-                        android:textSize="16sp"
-                        android:textColor="@color/primary_text"
-                        android:textStyle="bold"
-                        android:gravity="center"/>
-
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- Add Drug Card -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/card_add_drug"
-                android:layout_width="0dp"
-                android:layout_height="140dp"
-                app:layout_columnWeight="1"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp"
-                app:cardBackgroundColor="@color/card_background"
-                android:layout_margin="8dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?android:attr/selectableItemBackground">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="➕"
-                        android:textSize="40sp"
-                        android:layout_marginBottom="8dp"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/action_add_drug"
-                        android:textSize="16sp"
-                        android:textColor="@color/primary_text"
-                        android:textStyle="bold"
-                        android:gravity="center"/>
-
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- View My Drugs Card -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/card_view_drugs"
-                android:layout_width="0dp"
-                android:layout_height="140dp"
-                app:layout_columnWeight="1"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp"
-                app:cardBackgroundColor="@color/card_background"
-                android:layout_margin="8dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?android:attr/selectableItemBackground">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="💊"
-                        android:textSize="40sp"
-                        android:layout_marginBottom="8dp"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/action_view_drugs"
-                        android:textSize="16sp"
-                        android:textColor="@color/primary_text"
-                        android:textStyle="bold"
-                        android:gravity="center"/>
-
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- Check Interactions Card -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/card_check_interactions"
-                android:layout_width="0dp"
-                android:layout_height="140dp"
-                app:layout_columnWeight="1"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp"
-                app:cardBackgroundColor="@color/card_background"
-                android:layout_margin="8dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?android:attr/selectableItemBackground">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="⚠️"
-                        android:textSize="40sp"
-                        android:layout_marginBottom="8dp"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/action_check_interactions"
-                        android:textSize="16sp"
-                        android:textColor="@color/primary_text"
-                        android:textStyle="bold"
-                        android:gravity="center"/>
-
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-        </androidx.gridlayout.widget.GridLayout>
-
-    </LinearLayout>
-
-</LinearLayout>
+</ScrollView>

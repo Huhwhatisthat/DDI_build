@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Drug Identifier</string>
-    <string name="take_picture">Take Picture</string>
-    <string name="recognized_text_placeholder">Recognized text will appear here</string>
+    <string name="take_picture">Capture</string>
+    <string name="recognized_text_placeholder">Point camera at medication label</string>
     <string name="ingredients_added">%s added.</string>
     <string name="no_known_ingredients_found">No known ingredients found.</string>
     <string name="current_drugs">Current Drugs: %s</string>
@@ -10,16 +10,16 @@
     <string name="checking_for_interactions">Checking for interactions...</string>
     
     <!-- Home Screen Strings -->
-    <string name="welcome_message">Welcome to Drug Identifier</string>
+    <string name="welcome_message">Welcome Back!</string>
     <string name="top_section_placeholder">Content will be added here</string>
-    <string name="actions_title">What would you like to do?</string>
-    <string name="action_scan_drug">Scan Drug</string>
+    <string name="actions_title">Quick Actions</string>
+    <string name="action_scan_drug">Scan</string>
     <string name="action_add_drug">Add Drug</string>
-    <string name="action_view_drugs">View My Drugs</string>
-    <string name="action_check_interactions">Check Interactions</string>
+    <string name="action_view_drugs">My Drugs</string>
+    <string name="action_check_interactions">Interactions</string>
     <string name="my_medications_title">My Medications</string>
-    <string name="no_drugs_yet">No medications saved yet</string>
-    <string name="add_drug_hint">Tap \"Scan Drug\" or \"Add Drug\" below to get started</string>
+    <string name="no_drugs_yet">No medications yet</string>
+    <string name="add_drug_hint">Start by scanning or adding your first medication</string>
     <string name="delete_drug_confirmation">Delete %s?</string>
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>

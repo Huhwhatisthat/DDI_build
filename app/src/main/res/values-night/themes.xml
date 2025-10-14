@@ -1,7 +1,28 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="Base.Theme.DrugIdentifier" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+    <style name="Base.Theme.DrugIdentifier" parent="Theme.Material3.Dark.NoActionBar">
+        <!-- Primary Brand Color -->
+        <item name="colorPrimary">@color/primary_blue</item>
+        <item name="colorPrimaryVariant">@color/primary_blue_dark</item>
+        <item name="colorOnPrimary">@color/white</item>
+        
+        <!-- Secondary Brand Color -->
+        <item name="colorSecondary">@color/accent_teal</item>
+        <item name="colorSecondaryVariant">@color/accent_coral</item>
+        <item name="colorOnSecondary">@color/white</item>
+        
+        <!-- Background Color -->
+        <item name="android:colorBackground">#1A1F36</item>
+        <item name="colorSurface">#252B43</item>
+        <item name="colorOnBackground">@color/white</item>
+        <item name="colorOnSurface">@color/white</item>
+        
+        <!-- Status Bar -->
+        <item name="android:statusBarColor">#1A1F36</item>
+        <item name="android:windowLightStatusBar">false</item>
+        
+        <!-- Navigation Bar -->
+        <item name="android:navigationBarColor">#1A1F36</item>
+        <item name="android:windowLightNavigationBar">false</item>
     </style>
 </resources>

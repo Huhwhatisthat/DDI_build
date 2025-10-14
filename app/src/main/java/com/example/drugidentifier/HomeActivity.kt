@@ -7,7 +7,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.drugidentifier.data.DrugRepository
@@ -81,7 +80,7 @@ class HomeActivity : AppCompatActivity() {
 
     private fun setupActionCards() {
         // Scan Drug action
-        val scanDrugCard = findViewById<CardView>(R.id.card_scan_drug)
+        val scanDrugCard = findViewById<LinearLayout>(R.id.card_scan_drug)
         scanDrugCard.setOnClickListener {
             // Navigate to MainActivity for scanning
             val intent = Intent(this, MainActivity::class.java)
@@ -90,7 +89,7 @@ class HomeActivity : AppCompatActivity() {
         }
 
         // Add Drug Manually action
-        val addDrugCard = findViewById<CardView>(R.id.card_add_drug)
+        val addDrugCard = findViewById<LinearLayout>(R.id.card_add_drug)
         addDrugCard.setOnClickListener {
             // Navigate to MainActivity for adding drug
             val intent = Intent(this, MainActivity::class.java)
@@ -99,7 +98,7 @@ class HomeActivity : AppCompatActivity() {
         }
 
         // View My Drugs action
-        val viewDrugsCard = findViewById<CardView>(R.id.card_view_drugs)
+        val viewDrugsCard = findViewById<LinearLayout>(R.id.card_view_drugs)
         viewDrugsCard.setOnClickListener {
             // Navigate to MainActivity to view drugs
             val intent = Intent(this, MainActivity::class.java)
@@ -108,7 +107,7 @@ class HomeActivity : AppCompatActivity() {
         }
 
         // Check Interactions action
-        val checkInteractionsCard = findViewById<CardView>(R.id.card_check_interactions)
+        val checkInteractionsCard = findViewById<LinearLayout>(R.id.card_check_interactions)
         checkInteractionsCard.setOnClickListener {
             // Navigate to MainActivity to check interactions
             val intent = Intent(this, MainActivity::class.java)
