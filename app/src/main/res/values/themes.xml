@@ -35,6 +35,11 @@
         <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.App.SmallComponent</item>
         <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.App.MediumComponent</item>
         <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.App.LargeComponent</item>
+        
+        <!-- Text Input -->
+        <item name="editTextStyle">@style/Widget.App.EditText</item>
+        <item name="android:editTextColor">@color/primary_text</item>
+        <item name="android:textColorHint">@color/secondary_text</item>
     </style>
 
     <style name="Theme.DrugIdentifier" parent="Base.Theme.DrugIdentifier" />
@@ -75,5 +80,11 @@
     <style name="ShapeAppearance.App.LargeComponent" parent="ShapeAppearance.Material3.LargeComponent">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">28dp</item>
+    </style>
+    
+    <!-- Edit Text Style -->
+    <style name="Widget.App.EditText" parent="Widget.Material3.TextInputEditText.OutlinedBox">
+        <item name="android:textColor">@color/primary_text</item>
+        <item name="android:textColorHint">@color/secondary_text</item>
     </style>
 </resources>

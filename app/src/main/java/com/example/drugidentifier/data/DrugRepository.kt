@@ -2,6 +2,7 @@ package com.example.drugidentifier.data
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.example.drugidentifier.models.Drug
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
@@ -64,6 +65,21 @@ object DrugRepository {
     
     fun getAllDrugs(): Set<Pair<String, String>> {
         return drugs.toSet()
+    }
+    
+    /**
+     * Get all drugs as a list of Drug objects (for UI display)
+     */
+    fun getDrugsList(): List<Drug> {
+        return drugs.map { Drug(it.first, it.second) }
+    }
+    
+    /**
+     * Delete a drug by its nickname
+     */
+    fun deleteDrug(nickname: String) {
+        drugs.removeAll { it.first == nickname }
+        saveDrugsToStorage()
     }
     
     fun getAllIngredients(): List<String> {
