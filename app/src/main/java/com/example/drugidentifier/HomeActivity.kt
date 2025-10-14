@@ -79,21 +79,11 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun setupActionCards() {
-        // Scan Drug action
-        val scanDrugCard = findViewById<LinearLayout>(R.id.card_scan_drug)
-        scanDrugCard.setOnClickListener {
-            // Navigate to MainActivity for scanning
-            val intent = Intent(this, MainActivity::class.java)
-            intent.putExtra("ACTION", "SCAN_DRUG")
-            startActivity(intent)
-        }
-
-        // Add Drug Manually action
+        // Add Drug action (merged scan + manual)
         val addDrugCard = findViewById<LinearLayout>(R.id.card_add_drug)
         addDrugCard.setOnClickListener {
-            // Navigate to MainActivity for adding drug
-            val intent = Intent(this, MainActivity::class.java)
-            intent.putExtra("ACTION", "ADD_DRUG")
+            // Navigate to new AddDrugActivity
+            val intent = Intent(this, AddDrugActivity::class.java)
             startActivity(intent)
         }
 

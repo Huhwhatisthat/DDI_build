@@ -28,6 +28,12 @@
             </intent-filter>
         </activity>
         
+        <!-- Add Drug Activity - Unified Scan & Manual Entry -->
+        <activity
+            android:name=".AddDrugActivity"
+            android:exported="false">
+        </activity>
+        
         <!-- Main Activity - Drug Scanner -->
         <activity
             android:name=".MainActivity"
