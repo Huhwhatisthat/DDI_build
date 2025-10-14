@@ -4,8 +4,14 @@ package com.example.drugidentifier.models
  * Data class representing a medication
  * @param name The nickname/brand name of the drug
  * @param activeIngredient The active ingredient of the drug
+ * @param quantity Number of pills/doses per time
+ * @param frequency How often to take (e.g., "Every day", "Every month", "Twice a day")
+ * @param time Time to take the medication (e.g., "10:30 AM", "04:00 PM")
  */
 data class Drug(
     val name: String,
-    val activeIngredient: String
+    val activeIngredient: String,
+    val quantity: Int = 1,
+    val frequency: String = "Every day",
+    val time: String = ""
 )

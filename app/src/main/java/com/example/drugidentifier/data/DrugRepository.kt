@@ -5,6 +5,8 @@ import android.content.SharedPreferences
 import com.example.drugidentifier.models.Drug
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * Singleton repository to store drugs across activities with persistence
@@ -14,8 +16,8 @@ object DrugRepository {
     private const val PREF_NAME = "DrugIdentifierPrefs"
     private const val KEY_DRUGS = "saved_drugs"
     
-    // Store pairs of (Nickname, Ingredient)
-    private val drugs = mutableSetOf<Pair<String, String>>()
+    // Store Drug objects with full prescription information
+    private val drugs = mutableListOf<Drug>()
     private lateinit var sharedPreferences: SharedPreferences
     private val gson = Gson()
     private var isInitialized = false
@@ -38,10 +40,23 @@ object DrugRepository {
     private fun loadDrugsFromStorage() {
         val drugsJson = sharedPreferences.getString(KEY_DRUGS, null)
         if (drugsJson != null) {
-            val type = object : TypeToken<Set<Pair<String, String>>>() {}.type
-            val loadedDrugs: Set<Pair<String, String>> = gson.fromJson(drugsJson, type)
-            drugs.clear()
-            drugs.addAll(loadedDrugs)
+            try {
+                val type = object : TypeToken<List<Drug>>() {}.type
+                val loadedDrugs: List<Drug> = gson.fromJson(drugsJson, type)
+                drugs.clear()
+                drugs.addAll(loadedDrugs)
+            } catch (e: Exception) {
+                // Migration: Try loading old format (Pair<String, String>)
+                try {
+                    val oldType = object : TypeToken<Set<Pair<String, String>>>() {}.type
+                    val oldDrugs: Set<Pair<String, String>> = gson.fromJson(drugsJson, oldType)
+                    drugs.clear()
+                    drugs.addAll(oldDrugs.map { Drug(it.first, it.second) })
+                    saveDrugsToStorage() // Save in new format
+                } catch (migrationError: Exception) {
+                    drugs.clear()
+                }
+            }
         }
     }
     
@@ -53,37 +68,80 @@ object DrugRepository {
         sharedPreferences.edit().putString(KEY_DRUGS, drugsJson).apply()
     }
     
-    fun addDrug(nickname: String, ingredient: String) {
-        drugs.add(nickname to ingredient)
+    /**
+     * Add a drug with full prescription information
+     */
+    fun addDrug(drug: Drug) {
+        drugs.add(drug)
         saveDrugsToStorage()
-    }
-    
-    fun removeDrug(nickname: String, ingredient: String) {
-        drugs.remove(nickname to ingredient)
-        saveDrugsToStorage()
-    }
-    
-    fun getAllDrugs(): Set<Pair<String, String>> {
-        return drugs.toSet()
     }
     
     /**
-     * Get all drugs as a list of Drug objects (for UI display)
+     * Legacy method for backward compatibility
+     */
+    fun addDrug(nickname: String, ingredient: String) {
+        drugs.add(Drug(nickname, ingredient))
+        saveDrugsToStorage()
+    }
+    
+    /**
+     * Remove a drug
+     */
+    fun removeDrug(nickname: String, ingredient: String) {
+        drugs.removeAll { it.name == nickname && it.activeIngredient == ingredient }
+        saveDrugsToStorage()
+    }
+    
+    /**
+     * Get all drugs as a list of Drug objects
      */
     fun getDrugsList(): List<Drug> {
-        return drugs.map { Drug(it.first, it.second) }
+        return drugs.toList()
+    }
+    
+    /**
+     * Get today's prescriptions (drugs scheduled for today)
+     */
+    fun getTodaysPrescriptions(): List<Drug> {
+        return drugs.filter { it.time.isNotEmpty() }
+            .sortedBy { parseTime(it.time) }
+    }
+    
+    /**
+     * Parse time string to comparable format (24-hour)
+     */
+    private fun parseTime(timeStr: String): Int {
+        return try {
+            val sdf = SimpleDateFormat("hh:mm a", Locale.getDefault())
+            val date = sdf.parse(timeStr)
+            val cal = Calendar.getInstance()
+            cal.time = date ?: return 0
+            cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE)
+        } catch (e: Exception) {
+            0
+        }
     }
     
     /**
      * Delete a drug by its nickname
      */
     fun deleteDrug(nickname: String) {
-        drugs.removeAll { it.first == nickname }
+        drugs.removeAll { it.name == nickname }
         saveDrugsToStorage()
     }
     
+    /**
+     * Get all active ingredients for interaction checking
+     */
     fun getAllIngredients(): List<String> {
-        return drugs.map { it.second }
+        return drugs.map { it.activeIngredient }
+    }
+    
+    /**
+     * Legacy method for backward compatibility
+     */
+    fun getAllDrugs(): Set<Pair<String, String>> {
+        return drugs.map { it.name to it.activeIngredient }.toSet()
     }
     
     fun clearAll() {

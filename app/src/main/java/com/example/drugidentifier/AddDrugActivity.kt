@@ -1,10 +1,13 @@
 package com.example.drugidentifier
 
 import android.Manifest
+import android.app.TimePickerDialog
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
@@ -18,6 +21,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.drugidentifier.data.DrugRepository
+import com.example.drugidentifier.models.Drug
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
@@ -25,6 +29,8 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -33,6 +39,9 @@ class AddDrugActivity : AppCompatActivity() {
     private lateinit var backButton: ImageView
     private lateinit var nicknameInput: TextInputEditText
     private lateinit var ingredientInput: TextInputEditText
+    private lateinit var quantityInput: TextInputEditText
+    private lateinit var frequencyInput: AutoCompleteTextView
+    private lateinit var timeInput: TextInputEditText
     private lateinit var scanOptionCard: LinearLayout
     private lateinit var manualOptionCard: LinearLayout
     private lateinit var cameraSection: LinearLayout
@@ -61,6 +70,9 @@ class AddDrugActivity : AppCompatActivity() {
         backButton = findViewById(R.id.back_button)
         nicknameInput = findViewById(R.id.nickname_input)
         ingredientInput = findViewById(R.id.ingredient_input)
+        quantityInput = findViewById(R.id.quantity_input)
+        frequencyInput = findViewById(R.id.frequency_input)
+        timeInput = findViewById(R.id.time_input)
         scanOptionCard = findViewById(R.id.scan_option_card)
         manualOptionCard = findViewById(R.id.manual_option_card)
         cameraSection = findViewById(R.id.camera_section)
@@ -70,6 +82,8 @@ class AddDrugActivity : AppCompatActivity() {
         cancelScanButton = findViewById(R.id.cancel_scan_button)
         saveManualButton = findViewById(R.id.save_manual_button)
         cancelManualButton = findViewById(R.id.cancel_manual_button)
+        
+        setupFrequencyDropdown()
     }
 
     private fun setupListeners() {
@@ -100,6 +114,43 @@ class AddDrugActivity : AppCompatActivity() {
 
         saveManualButton.setOnClickListener { saveManualEntry() }
         cancelManualButton.setOnClickListener { hideManualEntrySection() }
+        
+        // Time picker
+        timeInput.setOnClickListener { showTimePicker() }
+    }
+    
+    private fun setupFrequencyDropdown() {
+        val frequencies = arrayOf(
+            "Every day",
+            "Twice a day",
+            "Three times a day",
+            "Every other day",
+            "Once a week",
+            "Twice a week",
+            "Every month",
+            "As needed"
+        )
+        
+        val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, frequencies)
+        frequencyInput.setAdapter(adapter)
+        
+        // Set default value
+        frequencyInput.setText("Every day", false)
+    }
+    
+    private fun showTimePicker() {
+        val calendar = Calendar.getInstance()
+        val hour = calendar.get(Calendar.HOUR_OF_DAY)
+        val minute = calendar.get(Calendar.MINUTE)
+        
+        TimePickerDialog(this, { _, selectedHour, selectedMinute ->
+            val cal = Calendar.getInstance()
+            cal.set(Calendar.HOUR_OF_DAY, selectedHour)
+            cal.set(Calendar.MINUTE, selectedMinute)
+            
+            val sdf = SimpleDateFormat("hh:mm a", Locale.getDefault())
+            timeInput.setText(sdf.format(cal.time))
+        }, hour, minute, false).show()
     }
 
     private fun showScanSection() {
@@ -141,6 +192,9 @@ class AddDrugActivity : AppCompatActivity() {
         scanOptionCard.visibility = View.VISIBLE
         manualOptionCard.visibility = View.VISIBLE
         ingredientInput.setText("")
+        quantityInput.setText("")
+        frequencyInput.setText("Every day", false)
+        timeInput.setText("")
     }
 
     private fun startCamera() {
@@ -261,11 +315,19 @@ class AddDrugActivity : AppCompatActivity() {
             return
         }
 
-        showModernConfirmationDialog(nickname, ingredient)
+        // Get prescription details
+        val quantityStr = quantityInput.text.toString().trim()
+        val quantity = if (quantityStr.isEmpty()) 1 else quantityStr.toIntOrNull() ?: 1
+        val frequency = frequencyInput.text.toString().ifEmpty { "Every day" }
+        val time = timeInput.text.toString().trim()
+
+        saveDrug(nickname, ingredient, quantity, frequency, time)
     }
 
-    private fun saveDrug(nickname: String, ingredient: String) {
-        DrugRepository.addDrug(nickname, ingredient)
+    private fun saveDrug(nickname: String, ingredient: String, 
+                        quantity: Int = 1, frequency: String = "Every day", time: String = "") {
+        val drug = Drug(nickname, ingredient, quantity, frequency, time)
+        DrugRepository.addDrug(drug)
         Toast.makeText(this, "✓ $nickname saved successfully!", Toast.LENGTH_SHORT).show()
 
         // Check interactions in background
@@ -331,6 +393,28 @@ class AddDrugActivity : AppCompatActivity() {
             }
         }
         return foundIngredients.toList()
+    }
+    
+    private fun levenshtein(s1: String, s2: String): Int {
+        val len1 = s1.length
+        val len2 = s2.length
+        val dp = Array(len1 + 1) { IntArray(len2 + 1) }
+        
+        for (i in 0..len1) dp[i][0] = i
+        for (j in 0..len2) dp[0][j] = j
+        
+        for (i in 1..len1) {
+            for (j in 1..len2) {
+                val cost = if (s1[i - 1] == s2[j - 1]) 0 else 1
+                dp[i][j] = minOf(
+                    dp[i - 1][j] + 1,
+                    dp[i][j - 1] + 1,
+                    dp[i - 1][j - 1] + cost
+                )
+            }
+        }
+        
+        return dp[len1][len2]
     }
 
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {

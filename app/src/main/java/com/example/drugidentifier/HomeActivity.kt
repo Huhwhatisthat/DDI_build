@@ -16,6 +16,10 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var drugsRecyclerView: RecyclerView
     private lateinit var emptyState: LinearLayout
     private lateinit var drugListAdapter: DrugListAdapter
+    
+    private lateinit var prescriptionsSection: LinearLayout
+    private lateinit var prescriptionsRecyclerView: RecyclerView
+    private lateinit var prescriptionAdapter: PrescriptionAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,6 +30,9 @@ class HomeActivity : AppCompatActivity() {
 
         // Set up RecyclerView
         setupRecyclerView()
+        
+        // Set up prescriptions section
+        setupPrescriptionsSection()
 
         // Set up action cards
         setupActionCards()
@@ -35,6 +42,7 @@ class HomeActivity : AppCompatActivity() {
         super.onResume()
         // Refresh the drug list when returning to this activity
         updateDrugList()
+        updatePrescriptionsList()
     }
 
     private fun setupRecyclerView() {
@@ -51,6 +59,30 @@ class HomeActivity : AppCompatActivity() {
         }
 
         updateDrugList()
+    }
+    
+    private fun setupPrescriptionsSection() {
+        prescriptionsSection = findViewById(R.id.prescriptions_section)
+        prescriptionsRecyclerView = findViewById(R.id.prescriptions_recycler)
+        
+        prescriptionsRecyclerView.apply {
+            layoutManager = LinearLayoutManager(this@HomeActivity)
+            setHasFixedSize(false)
+        }
+        
+        updatePrescriptionsList()
+    }
+    
+    private fun updatePrescriptionsList() {
+        val todaysPrescriptions = DrugRepository.getTodaysPrescriptions()
+        
+        if (todaysPrescriptions.isEmpty()) {
+            prescriptionsSection.visibility = View.GONE
+        } else {
+            prescriptionsSection.visibility = View.VISIBLE
+            prescriptionAdapter = PrescriptionAdapter(todaysPrescriptions)
+            prescriptionsRecyclerView.adapter = prescriptionAdapter
+        }
     }
 
     private fun updateDrugList() {
