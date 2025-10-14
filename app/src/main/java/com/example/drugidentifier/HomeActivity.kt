@@ -94,14 +94,5 @@ class HomeActivity : AppCompatActivity() {
             val intent = Intent(this, ViewDrugsActivity::class.java)
             startActivity(intent)
         }
-
-        // Check Interactions action
-        val checkInteractionsCard = findViewById<LinearLayout>(R.id.card_check_interactions)
-        checkInteractionsCard.setOnClickListener {
-            // Navigate to MainActivity to check interactions
-            val intent = Intent(this, MainActivity::class.java)
-            intent.putExtra("ACTION", "CHECK_INTERACTIONS")
-            startActivity(intent)
-        }
     }
 }

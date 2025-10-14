@@ -10,46 +10,86 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:background="@color/white"
-        android:paddingHorizontal="24dp"
-        android:paddingTop="24dp"
-        android:paddingBottom="20dp"
-        android:gravity="center_vertical"
         android:elevation="2dp">
 
-        <ImageView
-            android:id="@+id/back_button"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/ic_back"
-            android:padding="8dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            app:tint="@color/primary_text"/>
-
-        <TextView
-            android:layout_width="0dp"
+        <!-- Top Row: Back button, Title, Count -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="My Medications"
-            android:textSize="24sp"
-            android:textColor="@color/primary_text"
-            android:fontFamily="sans-serif-medium"
-            android:layout_marginStart="8dp"/>
+            android:orientation="horizontal"
+            android:paddingHorizontal="24dp"
+            android:paddingTop="24dp"
+            android:paddingBottom="12dp"
+            android:gravity="center_vertical">
 
-        <TextView
-            android:id="@+id/drug_count"
-            android:layout_width="wrap_content"
+            <ImageView
+                android:id="@+id/back_button"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_back"
+                android:padding="8dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                app:tint="@color/primary_text"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="My Medications"
+                android:textSize="24sp"
+                android:textColor="@color/primary_text"
+                android:fontFamily="sans-serif-medium"
+                android:layout_marginStart="8dp"/>
+
+            <TextView
+                android:id="@+id/drug_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textSize="14sp"
+                android:textColor="@color/secondary_text"
+                android:fontFamily="sans-serif"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="6dp"
+                android:background="@drawable/bg_count_badge"/>
+
+        </LinearLayout>
+
+        <!-- Interactions Toggle -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="0"
-            android:textSize="14sp"
-            android:textColor="@color/secondary_text"
-            android:fontFamily="sans-serif"
-            android:paddingHorizontal="12dp"
-            android:paddingVertical="6dp"
-            android:background="@drawable/bg_count_badge"/>
+            android:orientation="horizontal"
+            android:paddingHorizontal="24dp"
+            android:paddingBottom="16dp"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_warning"
+                android:layout_marginEnd="8dp"
+                app:tint="@color/warning"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Show Interactions"
+                android:textSize="15sp"
+                android:textColor="@color/primary_text"
+                android:fontFamily="sans-serif-medium"/>
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/interactions_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 

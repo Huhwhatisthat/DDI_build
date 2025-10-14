@@ -3,18 +3,22 @@ package com.example.drugidentifier
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.drugidentifier.data.DrugRepository
+import com.google.android.material.materialswitch.MaterialSwitch
 
 class ViewDrugsActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var emptyStateContainer: View
     private lateinit var drugCountBadge: TextView
+    private lateinit var interactionsSwitch: MaterialSwitch
     private lateinit var adapter: DrugListViewAdapter
+    private var showInteractions = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,6 +31,7 @@ class ViewDrugsActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.drugs_list)
         emptyStateContainer = findViewById(R.id.empty_state)
         drugCountBadge = findViewById(R.id.drug_count)
+        interactionsSwitch = findViewById(R.id.interactions_switch)
 
         // Back button
         backButton.setOnClickListener {
@@ -36,6 +41,12 @@ class ViewDrugsActivity : AppCompatActivity() {
         // Setup RecyclerView
         setupRecyclerView()
 
+        // Setup interactions switch
+        interactionsSwitch.setOnCheckedChangeListener { _, isChecked ->
+            showInteractions = isChecked
+            loadDrugs()
+        }
+
         // Load drugs
         loadDrugs()
     }
@@ -44,6 +55,8 @@ class ViewDrugsActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         adapter = DrugListViewAdapter(
             drugs = emptyList(),
+            interactions = emptyList(),
+            showInteractions = false,
             onDeleteClick = { drugName ->
                 deleteDrug(drugName)
             }
@@ -59,12 +72,23 @@ class ViewDrugsActivity : AppCompatActivity() {
             recyclerView.visibility = View.GONE
             emptyStateContainer.visibility = View.VISIBLE
             drugCountBadge.text = "0"
+            interactionsSwitch.isEnabled = false
         } else {
             // Show drugs list
             recyclerView.visibility = View.VISIBLE
             emptyStateContainer.visibility = View.GONE
             drugCountBadge.text = drugs.size.toString()
-            adapter.updateDrugs(drugs)
+            interactionsSwitch.isEnabled = true
+            
+            // Check for interactions if switch is on
+            val interactions = if (showInteractions) {
+                val ingredients = drugs.map { it.activeIngredient }
+                InteractionChecker.checkInteractions(ingredients)
+            } else {
+                emptyList()
+            }
+            
+            adapter.updateData(drugs, interactions, showInteractions)
         }
     }
 

@@ -172,77 +172,45 @@
 
                 </LinearLayout>
 
-                <!-- Second Row -->
+                <!-- Second Row - View My Drugs (Full Width) -->
                 <LinearLayout
+                    android:id="@+id/card_view_drugs"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:layout_height="160dp"
+                    android:background="@drawable/bg_card_view"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="20dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground">
 
-                    <!-- View My Drugs Card -->
-                    <LinearLayout
-                        android:id="@+id/card_view_drugs"
-                        android:layout_width="0dp"
-                        android:layout_height="160dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/bg_card_view"
-                        android:orientation="vertical"
+                    <ImageView
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:src="@drawable/ic_medications"
+                        android:layout_marginBottom="12dp"
+                        app:tint="@color/white"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/action_view_drugs"
+                        android:textSize="18sp"
+                        android:textColor="@color/white"
+                        android:fontFamily="sans-serif-medium"
                         android:gravity="center"
-                        android:padding="20dp"
-                        android:layout_marginEnd="8dp"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:foreground="?android:attr/selectableItemBackground">
+                        android:layout_marginBottom="4dp"/>
 
-                        <ImageView
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:src="@drawable/ic_medications"
-                            android:layout_marginBottom="12dp"
-                            app:tint="@color/white"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/action_view_drugs"
-                            android:textSize="16sp"
-                            android:textColor="@color/white"
-                            android:fontFamily="sans-serif-medium"
-                            android:gravity="center"/>
-
-                    </LinearLayout>
-
-                    <!-- Check Interactions Card -->
-                    <LinearLayout
-                        android:id="@+id/card_check_interactions"
-                        android:layout_width="0dp"
-                        android:layout_height="160dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/bg_card_interact"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:padding="20dp"
-                        android:layout_marginStart="8dp"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:foreground="?android:attr/selectableItemBackground">
-
-                        <ImageView
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:src="@drawable/ic_warning"
-                            android:layout_marginBottom="12dp"
-                            app:tint="@color/white"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/action_check_interactions"
-                            android:textSize="16sp"
-                            android:textColor="@color/white"
-                            android:fontFamily="sans-serif-medium"
-                            android:gravity="center"/>
-
-                    </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="View and check for interactions"
+                        android:textSize="14sp"
+                        android:textColor="@color/white"
+                        android:alpha="0.9"
+                        android:fontFamily="sans-serif"
+                        android:gravity="center"/>
 
                 </LinearLayout>
 
