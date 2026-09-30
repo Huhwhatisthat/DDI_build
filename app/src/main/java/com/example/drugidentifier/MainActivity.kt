@@ -1,4 +1,4 @@
-package com.example.drugidentifier // Make sure this matches your package name
+package com.example.drugidentifier
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -36,36 +36,29 @@ class MainActivity : AppCompatActivity() {
     private var nicknameForScan: String? = null
     private var showingInteractions = false
 
-    // Using the shared repository instead of local storage
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Initialize the repository
         DrugRepository.init(this)
 
         previewView = findViewById(R.id.camera_preview)
         resultTextView = findViewById(R.id.result_text)
         captureButton = findViewById(R.id.capture_button)
 
-        // On startup, the button is for adding a new drug.
         captureButton.text = "Add New Drug"
         captureButton.setOnClickListener { showAddDrugDialog() }
 
-        // Hide camera preview initially
         previewView.visibility = View.GONE
 
         cameraExecutor = Executors.newSingleThreadExecutor()
 
-        // Request camera permissions
         if (!allPermissionsGranted()) {
             ActivityCompat.requestPermissions(
                 this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS
             )
         }
         
-        // Handle intent from HomeActivity
         handleIncomingAction()
     }
     
@@ -73,11 +66,9 @@ class MainActivity : AppCompatActivity() {
         val action = intent.getStringExtra("ACTION")
         when (action) {
             "SCAN_DRUG", "ADD_DRUG" -> {
-                // Both actions start with adding a drug dialog
                 showAddDrugDialog()
             }
             "VIEW_DRUGS" -> {
-                // Display current drugs with interaction check option
                 displayCurrentDrugsWithInteractionOption()
             }
         }
@@ -100,11 +91,9 @@ class MainActivity : AppCompatActivity() {
             return
         }
         
-        // Initially show drugs without interactions
         showingInteractions = false
         displayDrugsOnly()
         
-        // Change button to "Check Interactions"
         captureButton.text = "Check Interactions"
         captureButton.setOnClickListener {
             if (!showingInteractions) {
@@ -143,20 +132,16 @@ class MainActivity : AppCompatActivity() {
             
             val interactionResult = DrugApiClient.checkInteractions(allIngredients)
             
-            // Build the display with highlighting
             val drugsWithStatus = buildString {
                 append("═══ My Medications ═══\n\n")
                 
-                // Get all drugs
                 val drugs = DrugRepository.getAllDrugs().toList()
                 
                 if (interactionResult != null && interactionResult != "No interactions found.") {
-                    // Parse interaction to find involved drugs
                     val involvedIngredients = findInvolvedIngredients(interactionResult, allIngredients)
                     
                     drugs.forEach { drug ->
                         if (involvedIngredients.contains(drug.second.lowercase())) {
-                            // Highlight drugs with interactions
                             append("⚠️ ${drug.first}\n")
                             append("   Active: ${drug.second}\n")
                             append("   ⚠️ HAS INTERACTION\n\n")
@@ -170,7 +155,6 @@ class MainActivity : AppCompatActivity() {
                     append("\n═══ INTERACTION WARNING ═══\n\n")
                     append(interactionResult)
                 } else {
-                    // No interactions found
                     drugs.forEach { drug ->
                         append("✅ ${drug.first}\n")
                         append("   Active: ${drug.second}\n")
@@ -385,9 +369,7 @@ class MainActivity : AppCompatActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
-            if (allPermissionsGranted()) {
-                // Don't start camera automatically anymore
-            } else {
+            if (!allPermissionsGranted()) {
                 Toast.makeText(this, "Permissions not granted by the user.", Toast.LENGTH_SHORT).show()
                 finish()
             }

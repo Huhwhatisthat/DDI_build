@@ -22,21 +22,17 @@ class InteractionsActivity : AppCompatActivity() {
 
         DrugRepository.init(this)
 
-        // Initialize views
         val backButton = findViewById<ImageView>(R.id.back_button)
         recyclerView = findViewById(R.id.interactions_recycler_view)
         emptyStateContainer = findViewById(R.id.empty_state_container)
         interactionCount = findViewById(R.id.interaction_count)
 
-        // Back button
         backButton.setOnClickListener {
             finish()
         }
 
-        // Setup RecyclerView
         setupRecyclerView()
 
-        // Load interactions
         loadInteractions()
     }
 
@@ -50,22 +46,18 @@ class InteractionsActivity : AppCompatActivity() {
         val drugs = DrugRepository.getDrugsList()
         
         if (drugs.size < 2) {
-            // Show empty state - need at least 2 drugs
             recyclerView.visibility = View.GONE
             emptyStateContainer.visibility = View.VISIBLE
             interactionCount.text = "0"
         } else {
-            // Check for interactions
             val ingredients = drugs.map { it.activeIngredient }
             val interactions = InteractionChecker.checkInteractions(ingredients)
             
             if (interactions.isEmpty()) {
-                // No interactions found - show empty state
                 recyclerView.visibility = View.GONE
                 emptyStateContainer.visibility = View.VISIBLE
                 interactionCount.text = "0"
             } else {
-                // Show interactions
                 recyclerView.visibility = View.VISIBLE
                 emptyStateContainer.visibility = View.GONE
                 interactionCount.text = interactions.size.toString()

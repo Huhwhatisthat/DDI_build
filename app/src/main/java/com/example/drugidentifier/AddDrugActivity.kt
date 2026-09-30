@@ -115,7 +115,6 @@ class AddDrugActivity : AppCompatActivity() {
         saveManualButton.setOnClickListener { saveManualEntry() }
         cancelManualButton.setOnClickListener { hideManualEntrySection() }
         
-        // Time picker
         timeInput.setOnClickListener { showTimePicker() }
     }
     
@@ -134,7 +133,6 @@ class AddDrugActivity : AppCompatActivity() {
         val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, frequencies)
         frequencyInput.setAdapter(adapter)
         
-        // Set default value
         frequencyInput.setText("Every day", false)
     }
     
@@ -154,7 +152,6 @@ class AddDrugActivity : AppCompatActivity() {
     }
 
     private fun showScanSection() {
-        // Request camera permissions if needed
         if (!allPermissionsGranted()) {
             ActivityCompat.requestPermissions(
                 this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS
@@ -162,11 +159,9 @@ class AddDrugActivity : AppCompatActivity() {
             return
         }
 
-        // Hide option cards
         scanOptionCard.visibility = View.GONE
         manualOptionCard.visibility = View.GONE
 
-        // Show camera section
         cameraSection.visibility = View.VISIBLE
         startCamera()
     }
@@ -178,11 +173,9 @@ class AddDrugActivity : AppCompatActivity() {
     }
 
     private fun showManualEntrySection() {
-        // Hide option cards
         scanOptionCard.visibility = View.GONE
         manualOptionCard.visibility = View.GONE
 
-        // Show manual entry section
         manualEntrySection.visibility = View.VISIBLE
         ingredientInput.requestFocus()
     }
@@ -315,7 +308,6 @@ class AddDrugActivity : AppCompatActivity() {
             return
         }
 
-        // Get prescription details
         val quantityStr = quantityInput.text.toString().trim()
         val quantity = if (quantityStr.isEmpty()) 1 else quantityStr.toIntOrNull() ?: 1
         val frequency = frequencyInput.text.toString().ifEmpty { "Every day" }
@@ -330,7 +322,6 @@ class AddDrugActivity : AppCompatActivity() {
         DrugRepository.addDrug(drug)
         Toast.makeText(this, "✓ $nickname saved successfully!", Toast.LENGTH_SHORT).show()
 
-        // Check interactions in background
         val allIngredients = DrugRepository.getAllIngredients()
         lifecycleScope.launch {
             try {

@@ -16,7 +16,6 @@
         android:orientation="vertical"
         android:padding="20dp">
 
-        <!-- Header with Severity Badge -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -56,7 +55,6 @@
 
         </LinearLayout>
 
-        <!-- Interacting Drugs -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -94,7 +92,6 @@
 
         </LinearLayout>
 
-        <!-- Description -->
         <TextView
             android:id="@+id/interaction_description"
             android:layout_width="match_parent"

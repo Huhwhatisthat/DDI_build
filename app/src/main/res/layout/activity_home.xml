@@ -12,7 +12,6 @@
         android:orientation="vertical"
         android:paddingBottom="24dp">
 
-        <!-- Header Section -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -43,7 +42,6 @@
 
         </LinearLayout>
 
-        <!-- Medications Section -->
         <LinearLayout
             android:id="@+id/top_section"
             android:layout_width="match_parent"
@@ -53,7 +51,6 @@
             android:paddingTop="24dp"
             android:paddingBottom="16dp">
 
-            <!-- Horizontal ScrollView for Drug Cards -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/drugs_recycler_view"
                 android:layout_width="match_parent"
@@ -63,7 +60,6 @@
                 android:paddingStart="20dp"
                 android:paddingEnd="20dp"/>
 
-            <!-- Empty State Message -->
             <LinearLayout
                 android:id="@+id/empty_state"
                 android:layout_width="match_parent"
@@ -104,7 +100,6 @@
 
         </LinearLayout>
 
-        <!-- Today's Prescriptions Section -->
         <LinearLayout
             android:id="@+id/prescriptions_section"
             android:layout_width="match_parent"
@@ -132,7 +127,6 @@
 
         </LinearLayout>
 
-        <!-- Actions Section -->
         <LinearLayout
             android:id="@+id/bottom_section"
             android:layout_width="match_parent"
@@ -151,13 +145,11 @@
                 android:fontFamily="sans-serif-medium"
                 android:layout_marginBottom="20dp"/>
 
-            <!-- Grid of Action Cards -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <!-- First Row - Add Drug (Full Width) -->
                 <LinearLayout
                     android:id="@+id/card_add_drug"
                     android:layout_width="match_parent"
@@ -200,7 +192,6 @@
 
                 </LinearLayout>
 
-                <!-- Second Row - View My Drugs (Full Width) -->
                 <LinearLayout
                     android:id="@+id/card_view_drugs"
                     android:layout_width="match_parent"

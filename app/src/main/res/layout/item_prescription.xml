@@ -9,7 +9,6 @@
     android:layout_marginBottom="12dp"
     android:gravity="center_vertical">
 
-    <!-- Status Icon -->
     <ImageView
         android:id="@+id/status_icon"
         android:layout_width="32dp"
@@ -18,7 +17,6 @@
         android:layout_marginEnd="12dp"
         app:tint="@color/warning_color"/>
 
-    <!-- Prescription Info -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -71,7 +69,6 @@
 
     </LinearLayout>
 
-    <!-- Time -->
     <TextView
         android:id="@+id/time_text"
         android:layout_width="wrap_content"

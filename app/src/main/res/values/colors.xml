@@ -3,14 +3,12 @@
     <color name="black">#FF000000</color>
     <color name="white">#F5EEEB</color>
     
-    <!-- New Color Palette - Warm Neutrals Theme -->
     <color name="palette_lightest">#F2E9E4</color>
     <color name="palette_light">#C9ADA7</color>
     <color name="palette_medium">#9A8C98</color>
     <color name="palette_dark">#4A4E69</color>
     <color name="palette_darkest">#22223B</color>
     
-    <!-- Primary Colors -->
     <color name="primary">#4A4E69</color>
     <color name="primary_lighter">#9A8C98</color>
     <color name="primary_blue">#4A4E69</color>
@@ -20,7 +18,6 @@
     <color name="accent_yellow">#F2E9E4</color>
     <color name="accent_green">#9A8C98</color>
     
-    <!-- Background Colors -->
     <color name="background_color">#F2E9E4</color>
     <color name="top_section_background">#F5EEEB</color>
     <color name="bottom_section_background">#F2E9E4</color>
@@ -28,22 +25,18 @@
     <color name="surface">#F2E9E4</color>
     <color name="surface_light">#F2E9E4</color>
     
-    <!-- Text Colors -->
     <color name="primary_text">#22223B</color>
     <color name="text_secondary">#9A8C98</color>
     <color name="secondary_text">#9A8C98</color>
     <color name="text_on_primary">#F5EEEB</color>
 
-    <!-- Border Color -->
     <color name="border">#C9ADA7</color>
     
-    <!-- Drug Card Colors -->
     <color name="drug_card_background">#F5EEEB</color>
     <color name="drug_card_accent">#F2E9E4</color>
     <color name="ingredient_badge_background">#C9ADA7</color>
     <color name="ingredient_badge_text">#22223B</color>
     
-    <!-- Action Card Colors -->
     <color name="card_scan_gradient_start">#4A4E69</color>
     <color name="card_scan_gradient_end">#22223B</color>
     <color name="card_add_gradient_start">#9A8C98</color>
@@ -53,7 +46,6 @@
     <color name="card_interact_gradient_start">#F2E9E4</color>
     <color name="card_interact_gradient_end">#C9ADA7</color>
     
-    <!-- Status Colors - Restored Original Vibrant Colors -->
     <color name="status_safe">#66BB6A</color>
     <color name="status_danger">#EF5350</color>
     <color name="danger">#EF5350</color>
@@ -65,7 +57,6 @@
     <color name="error_color">#EF5350</color>
     <color name="info">#4A4E69</color>
     
-    <!-- Overlay -->
     <color name="overlay_dark">#80000000</color>
     <color name="overlay_light">#1A000000</color>
 </resources>

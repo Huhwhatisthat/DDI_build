@@ -33,7 +33,6 @@ class InteractionsAdapter(
         holder.severityBadge.text = InteractionChecker.getSeverityText(interaction.severity)
         holder.description.text = interaction.description
 
-        // Set severity badge color
         val color = ContextCompat.getColor(
             holder.itemView.context,
             InteractionChecker.getSeverityColor(interaction.severity)
