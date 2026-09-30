@@ -14,7 +14,6 @@
         app:layout_constraintBottom_toTopOf="@+id/bottom_controls"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Top Overlay with Results -->
     <LinearLayout
         android:id="@+id/result_container"
         android:layout_width="match_parent"
@@ -49,7 +48,6 @@
 
     </LinearLayout>
 
-    <!-- Bottom Controls -->
     <LinearLayout
         android:id="@+id/bottom_controls"
         android:layout_width="match_parent"

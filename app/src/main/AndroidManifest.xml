@@ -17,7 +17,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DrugIdentifier">
         
-        <!-- Home Activity - Launcher -->
         <activity
             android:name=".HomeActivity"
             android:exported="true">
@@ -28,25 +27,21 @@
             </intent-filter>
         </activity>
         
-        <!-- Add Drug Activity - Unified Scan & Manual Entry -->
         <activity
             android:name=".AddDrugActivity"
             android:exported="false">
         </activity>
         
-        <!-- View Drugs Activity - Scrollable Drug List -->
         <activity
             android:name=".ViewDrugsActivity"
             android:exported="false">
         </activity>
         
-        <!-- Interactions Activity - Drug Interaction Checker -->
         <activity
             android:name=".InteractionsActivity"
             android:exported="false">
         </activity>
         
-        <!-- Main Activity - Drug Scanner -->
         <activity
             android:name=".MainActivity"
             android:exported="false">

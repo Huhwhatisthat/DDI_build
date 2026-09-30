@@ -6,32 +6,25 @@ import kotlinx.coroutines.withContext
 
 object DrugApiClient {
 
-    // ▼▼▼ THIS IS THE UPDATED OFFLINE DATABASE ▼▼▼
     private val interactionDatabase = mapOf(
-        // Ibuprofen Interactions
         "ibuprofen" to mapOf(
             "aspirin" to "High risk of stomach bleeding. Ibuprofen can also reduce the heart-protective effects of low-dose aspirin.",
             "pseudoephedrine" to "Increases blood pressure and may cause a racing heart or anxiety. Use with caution, especially if you have a history of heart conditions or high blood pressure.",
             "naproxen" to "Increased risk of stomach bleeding. Both are NSAIDs and should not be taken together."
         ),
-        // Aspirin Interactions
         "aspirin" to mapOf(
             "ibuprofen" to "High risk of stomach bleeding. Taking both can also reduce aspirin's heart-protective effects.",
             "naproxen" to "Increased risk of stomach bleeding."
         ),
-        // Pseudoephedrine Interactions
         "pseudoephedrine" to mapOf(
             "ibuprofen" to "Increases blood pressure and may cause a racing heart or anxiety. Use with caution if you have a history of high blood pressure."
         ),
-        // Doxycycline Interactions
         "doxycycline" to mapOf(
             "calcium carbonate" to "Antacids containing calcium prevent the body from absorbing doxycycline, leading to treatment failure. Take at least 2 hours before or 4 hours after antacids."
         ),
-        // Calcium Carbonate (common antacid ingredient)
         "calcium carbonate" to mapOf(
             "doxycycline" to "Prevents the body from absorbing doxycycline, leading to treatment failure. Take at least 2 hours before or 4 hours after."
         ),
-        // Other existing interactions
         "naproxen" to mapOf(
             "ibuprofen" to "Increased risk of stomach bleeding. Both are NSAIDs and should not be taken together.",
             "aspirin" to "Increased risk of stomach bleeding."
@@ -43,7 +36,6 @@ object DrugApiClient {
             "diphenhydramine" to "Increased drowsiness and sedation. Avoid operating machinery."
         )
     )
-    // ▲▲▲ END OF DATABASE ▲▲▲
 
     suspend fun checkInteractions(ingredients: List<String>): String? {
         return withContext(Dispatchers.Default) {

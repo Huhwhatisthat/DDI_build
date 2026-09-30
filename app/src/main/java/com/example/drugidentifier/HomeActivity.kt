@@ -27,22 +27,17 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
-        // Initialize the repository
         DrugRepository.init(this)
 
-        // Set up RecyclerView
         setupRecyclerView()
         
-        // Set up prescriptions section
         setupPrescriptionsSection()
 
-        // Set up action cards
         setupActionCards()
     }
 
     override fun onResume() {
         super.onResume()
-        // Refresh the drug list when returning to this activity
         updateDrugList()
         updatePrescriptionsList()
     }
@@ -97,26 +92,22 @@ class HomeActivity : AppCompatActivity() {
             .setCancelable(true)
             .create()
         
-        // Set drug info
         dialogView.findViewById<TextView>(R.id.dialog_drug_name).text = drug.name
         val detailsText = "${drug.quantity} ${if (drug.quantity == 1) "pill" else "pills"} • ${drug.time}"
         dialogView.findViewById<TextView>(R.id.dialog_drug_details).text = detailsText
         
-        // Taken button
         dialogView.findViewById<LinearLayout>(R.id.btn_taken).setOnClickListener {
             DrugRepository.updateMedicationStatus(drug.name, taken = true)
             updatePrescriptionsList()
             dialog.dismiss()
         }
         
-        // Skipped button
         dialogView.findViewById<LinearLayout>(R.id.btn_skipped).setOnClickListener {
             DrugRepository.updateMedicationStatus(drug.name, taken = false)
             updatePrescriptionsList()
             dialog.dismiss()
         }
         
-        // Cancel button
         dialogView.findViewById<com.google.android.material.button.MaterialButton>(R.id.btn_cancel).setOnClickListener {
             dialog.dismiss()
         }
@@ -150,18 +141,14 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun setupActionCards() {
-        // Add Drug action (merged scan + manual)
         val addDrugCard = findViewById<LinearLayout>(R.id.card_add_drug)
         addDrugCard.setOnClickListener {
-            // Navigate to new AddDrugActivity
             val intent = Intent(this, AddDrugActivity::class.java)
             startActivity(intent)
         }
 
-        // View My Drugs action
         val viewDrugsCard = findViewById<LinearLayout>(R.id.card_view_drugs)
         viewDrugsCard.setOnClickListener {
-            // Navigate to ViewDrugsActivity
             val intent = Intent(this, ViewDrugsActivity::class.java)
             startActivity(intent)
         }

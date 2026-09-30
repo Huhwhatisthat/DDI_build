@@ -96,7 +96,6 @@ class DrugListViewAdapter(
                 holder.severityBadge.text = InteractionChecker.getSeverityText(interaction.severity)
                 holder.description.text = interaction.description
 
-                // Set severity badge color
                 val color = ContextCompat.getColor(
                     holder.itemView.context,
                     InteractionChecker.getSeverityColor(interaction.severity)
@@ -110,7 +109,7 @@ class DrugListViewAdapter(
         return if (!showInteractions || interactions.isEmpty()) {
             drugs.size
         } else {
-            drugs.size + 1 + interactions.size // drugs + header + interactions
+            drugs.size + 1 + interactions.size
         }
     }
 
@@ -121,7 +120,6 @@ class DrugListViewAdapter(
         notifyDataSetChanged()
     }
 
-    // Legacy method for compatibility
     fun updateDrugs(newDrugs: List<Drug>) {
         updateData(newDrugs, emptyList(), false)
     }

@@ -25,28 +25,23 @@ class ViewDrugsActivity : AppCompatActivity() {
 
         DrugRepository.init(this)
 
-        // Initialize views
         val backButton = findViewById<ImageView>(R.id.back_button)
         recyclerView = findViewById(R.id.drugs_list)
         emptyStateContainer = findViewById(R.id.empty_state)
         drugCountBadge = findViewById(R.id.drug_count)
         checkInteractionsButton = findViewById(R.id.check_interactions_button)
 
-        // Back button
         backButton.setOnClickListener {
             finish()
         }
 
-        // Setup RecyclerView
         setupRecyclerView()
 
-        // Setup interactions button - navigate to interactions page
         checkInteractionsButton.setOnClickListener {
             val intent = Intent(this, InteractionsActivity::class.java)
             startActivity(intent)
         }
 
-        // Load drugs
         loadDrugs()
     }
 
@@ -72,14 +67,12 @@ class ViewDrugsActivity : AppCompatActivity() {
         val drugs = DrugRepository.getDrugsList()
         
         if (drugs.isEmpty()) {
-            // Show empty state
             recyclerView.visibility = View.GONE
             emptyStateContainer.visibility = View.VISIBLE
             drugCountBadge.text = "0"
             checkInteractionsButton.isEnabled = false
             checkInteractionsButton.alpha = 0.5f
         } else {
-            // Show drugs list
             recyclerView.visibility = View.VISIBLE
             emptyStateContainer.visibility = View.GONE
             drugCountBadge.text = drugs.size.toString()
@@ -91,13 +84,12 @@ class ViewDrugsActivity : AppCompatActivity() {
     }
 
     private fun deleteDrug(drugName: String) {
-        // Show confirmation dialog
         androidx.appcompat.app.AlertDialog.Builder(this)
             .setTitle("Delete Medication")
             .setMessage("Are you sure you want to delete $drugName?")
             .setPositiveButton("Delete") { _, _ ->
                 DrugRepository.deleteDrug(drugName)
-                loadDrugs() // Refresh list
+                loadDrugs()
             }
             .setNegativeButton("Cancel", null)
             .show()

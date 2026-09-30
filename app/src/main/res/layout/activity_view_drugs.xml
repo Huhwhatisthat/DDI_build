@@ -6,7 +6,6 @@
     android:orientation="vertical"
     android:background="@color/background_color">
 
-    <!-- Header -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -14,7 +13,6 @@
         android:background="@color/white"
         android:elevation="2dp">
 
-        <!-- Top Row: Back button, Title, Count -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -60,7 +58,6 @@
 
         </LinearLayout>
 
-        <!-- Interactions Button -->
         <LinearLayout
             android:id="@+id/check_interactions_button"
             android:layout_width="match_parent"
@@ -101,7 +98,6 @@
 
     </LinearLayout>
 
-    <!-- Drug List -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/drugs_list"
         android:layout_width="match_parent"
@@ -112,7 +108,6 @@
         android:paddingBottom="16dp"
         android:clipToPadding="false"/>
 
-    <!-- Empty State -->
     <LinearLayout
         android:id="@+id/empty_state"
         android:layout_width="match_parent"
